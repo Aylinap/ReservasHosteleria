@@ -32,9 +32,11 @@ public class Menu {
 
     }
 
+    // parametro que le paso es el usuario
     public void ejecutarMenu(Usuario usuario) {
-        mostrarMenuPrincipal();
 
+        mostrarMenuPrincipal();
+        // declaras la variable y la guardas
         int opcion = scanner.nextInt();
         scanner.nextLine(); // limpia el scanner
 
