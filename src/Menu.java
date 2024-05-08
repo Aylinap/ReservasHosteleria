@@ -70,7 +70,10 @@ public class Menu {
         System.out.print("Contraseña: ");
         String pass = scanner.nextLine();
 
-        if (user.equals("admin") && pass.equals("admin123")) { // claves para ingresar al gestor
+        if (user.equals("admin") && pass.equals("admin123")) {
+            // claves para ingresar al gestor se puede modificar para
+            // que sea tomado desde otro lado o desde la base de
+            // datos tambien
             mostrarSubMenuGestorReservas();
             int opcion = scanner.nextInt();
             scanner.nextLine(); // Limpiar el scanner
