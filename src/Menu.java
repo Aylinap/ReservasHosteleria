@@ -1,10 +1,12 @@
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
     private Scanner scanner;
+    private List<Reserva> reservasDisponibles;
 
     public Menu(Scanner scanner) {
         this.scanner = new Scanner(System.in);
@@ -110,6 +112,15 @@ public class Menu {
             System.out.println("Credenciales incorrectas. Acceso denegado.");
         }
     }
+    // falta que liste el horario disponibles para las reservas y los dias que solo
+    // son los dias de la semana
+
+    public void mostrarHorariosDisponibles() {
+        System.out.println("--- Horarios disponibles para hacer una reserva ---");
+        for (LocalTime horario : Reserva.getHorariosReservas()) {
+            System.out.println(horario);
+        }
+    }
 
     public void añadirReserva() {
         System.out.println("\n--- Añadir Reserva ---");
@@ -117,10 +128,17 @@ public class Menu {
         System.out.println("Ingrese el nombre del cliente: ");
         String nombreCliente = scanner.nextLine();
 
+        System.out.println("¿Cuántas personas vienen contigo?");
+        int numeroComensales = scanner.nextInt();
+        scanner.nextLine();
+        // el numero de la mesa deberia ser automatico depende de la cantidad de
+        // comensales.
         System.out.println("Ingrese el número de mesa: ");
         int numeroMesa = scanner.nextInt();
         scanner.nextLine();
 
+        // numero sala tiene que asignarse automatico o depende de la cantidad de
+        // comensales.
         System.out.println("Ingrese el número de sala: ");
         int numeroSala = scanner.nextInt();
         scanner.nextLine();
@@ -129,11 +147,17 @@ public class Menu {
         String fechaReservaStr = scanner.nextLine();
         java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
 
+        mostrarHorariosDisponibles();
+
+        // puedo hacer que el horario sea submenu ingresado como opcion y que no sea
+        // ingresado manualmente
+
         System.out.println("Ingrese la hora de reserva (HH:mm): ");
         String horaReservaStr = scanner.nextLine();
         LocalTime horaReserva = LocalTime.parse(horaReservaStr);
 
-        Reserva reservaNueva = new Reserva(nombreCliente, numeroMesa, numeroSala, fechaReserva, horaReserva);
+        Reserva reservaNueva = new Reserva(nombreCliente, numeroMesa, numeroSala, fechaReserva, horaReserva,
+                numeroComensales);
 
         try {
             ReservaDao reservaDao = new ReservaDao();

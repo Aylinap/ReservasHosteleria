@@ -14,13 +14,16 @@ public class Reserva {
     private int sala;
     private Date diaReserva;
     private LocalTime horaReserva;
+    private int numero_comensales;
 
-    public Reserva(String nombre_cliente, int numero_mesa, int sala, Date diaReserva, LocalTime horaReserva) {
+    public Reserva(String nombre_cliente, int numero_mesa, int sala, Date diaReserva, LocalTime horaReserva,
+            int numero_comensales) {
         this.nombre_cliente = nombre_cliente;
         this.numero_mesa = numero_mesa;
         this.sala = sala;
         this.diaReserva = diaReserva;
         this.horaReserva = horaReserva;
+        this.numero_comensales = numero_comensales;
     }
 
     public LocalTime getHoraReserva() {
@@ -63,6 +66,14 @@ public class Reserva {
         this.diaReserva = diaReserva;
     }
 
+    public int getNumero_comensales() {
+        return numero_comensales;
+    }
+
+    public void setNumero_comensales(int numero_comensales) {
+        this.numero_comensales = numero_comensales;
+    }
+
     public static LocalTime[] getHorariosReservas() {
         return horarios_reservas;
     }
@@ -76,4 +87,5 @@ public class Reserva {
         }
         return false;
     }
+
 }
