@@ -6,9 +6,10 @@ public class Mesa {
     private int capacidad;
     private boolean ocupada;
     private boolean reservada;
+    private String tipo_mesa;
 
     public Mesa(int numero_mesa, Sala sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
-            boolean reservada) {
+            boolean reservada, String tipo_mesa) {
         this.numero_mesa = numero_mesa;
         this.sala = sala;
         this.disponible = disponible;
@@ -16,6 +17,7 @@ public class Mesa {
         this.capacidad = capacidad;
         this.ocupada = ocupada;
         this.reservada = reservada;
+        this.tipo_mesa = tipo_mesa;
 
     }
 
@@ -73,6 +75,14 @@ public class Mesa {
 
     public void setReservada(boolean reservada) {
         this.reservada = reservada;
+    }
+
+    public String getTipo_mesa() {
+        return tipo_mesa;
+    }
+
+    public void setTipo_mesa(String tipo_mesa) {
+        this.tipo_mesa = tipo_mesa;
     }
 
 }
