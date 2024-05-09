@@ -1,3 +1,6 @@
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 public class Menu {
@@ -42,7 +45,7 @@ public class Menu {
 
         switch (opcion) {
             case 1:
-                // realizar una reserva
+                añadirReserva();
                 break;
             case 2:
                 // mostrar reserva por nombre
@@ -105,6 +108,39 @@ public class Menu {
             }
         } else {
             System.out.println("Credenciales incorrectas. Acceso denegado.");
+        }
+    }
+
+    public void añadirReserva() {
+        System.out.println("\n--- Añadir Reserva ---");
+
+        System.out.println("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+
+        System.out.println("Ingrese el número de mesa: ");
+        int numeroMesa = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Ingrese el número de sala: ");
+        int numeroSala = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Ingrese la fecha de reserva (yyyy-MM-dd): ");
+        String fechaReservaStr = scanner.nextLine();
+        java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
+
+        System.out.println("Ingrese la hora de reserva (HH:mm): ");
+        String horaReservaStr = scanner.nextLine();
+        LocalTime horaReserva = LocalTime.parse(horaReservaStr);
+
+        Reserva reservaNueva = new Reserva(nombreCliente, numeroMesa, numeroSala, fechaReserva, horaReserva);
+
+        try {
+            ReservaDao reservaDao = new ReservaDao();
+            reservaDao.insertarReserva(reservaNueva);
+            System.out.println("Reserva añadida correctamente.");
+        } catch (SQLException e) {
+            System.out.println("Error al añadir la reserva: " + e.getMessage());
         }
     }
 }

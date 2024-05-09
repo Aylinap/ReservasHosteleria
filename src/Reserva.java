@@ -1,5 +1,6 @@
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 public class Reserva {
     private static final LocalTime[] horarios_reservas = {
@@ -8,16 +9,18 @@ public class Reserva {
             LocalTime.of(14, 00),
             LocalTime.of(14, 15)
     };
-    private LocalTime horaReserva;
+    private String nombre_cliente;
     private int numero_mesa;
     private int sala;
-    private String nombre_cliente;
+    private Date diaReserva;
+    private LocalTime horaReserva;
 
-    public Reserva(LocalTime horaReserva, int numero_mesa, int sala, String nombre_cliente) {
-        this.horaReserva = horaReserva;
+    public Reserva(String nombre_cliente, int numero_mesa, int sala, Date diaReserva, LocalTime horaReserva) {
+        this.nombre_cliente = nombre_cliente;
         this.numero_mesa = numero_mesa;
         this.sala = sala;
-        this.nombre_cliente = nombre_cliente;
+        this.diaReserva = diaReserva;
+        this.horaReserva = horaReserva;
     }
 
     public LocalTime getHoraReserva() {
@@ -50,6 +53,14 @@ public class Reserva {
 
     public void setNombre_cliente(String nombre_cliente) {
         this.nombre_cliente = nombre_cliente;
+    }
+
+    public Date getDiaReserva() {
+        return diaReserva;
+    }
+
+    public void setDiaReserva(Date diaReserva) {
+        this.diaReserva = diaReserva;
     }
 
     public static LocalTime[] getHorariosReservas() {
