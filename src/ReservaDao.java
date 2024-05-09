@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class ReservaDao {
 
-    private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, numero_mesa, numero_sala, dia_reserva, horaReserva, comensales) VALUES (?, ?, ?, ?, ?,?)";
+    private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, numero_mesa, numero_sala, dia_reserva, horaReserva, comensales, comentario) VALUES (?, ?, ?, ?, ?,?,?)";
     private static final String mostrar_todas_reservas = "selecto * from reserva";
 
     public void insertarReserva(Reserva reservaNueva) throws SQLException {
@@ -22,6 +22,7 @@ public class ReservaDao {
         pstmt.setDate(4, new java.sql.Date(reservaNueva.getDiaReserva().getTime()));
         pstmt.setTime(5, java.sql.Time.valueOf(reservaNueva.getHoraReserva()));
         pstmt.setInt(6, reservaNueva.getNumero_comensales());
+        pstmt.setString(7, reservaNueva.getDescripcion());
 
         pstmt.executeUpdate();
         System.out.println("Sentencia SQL para productos: " + pstmt.toString());

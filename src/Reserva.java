@@ -15,15 +15,17 @@ public class Reserva {
     private Date diaReserva;
     private LocalTime horaReserva;
     private int numero_comensales;
+    private String descripcion;
 
     public Reserva(String nombre_cliente, int numero_mesa, int sala, Date diaReserva, LocalTime horaReserva,
-            int numero_comensales) {
+            int numero_comensales, String descripcion) {
         this.nombre_cliente = nombre_cliente;
         this.numero_mesa = numero_mesa;
         this.sala = sala;
         this.diaReserva = diaReserva;
         this.horaReserva = horaReserva;
         this.numero_comensales = numero_comensales;
+        this.descripcion = descripcion;
     }
 
     public LocalTime getHoraReserva() {
@@ -76,6 +78,14 @@ public class Reserva {
 
     public static LocalTime[] getHorariosReservas() {
         return horarios_reservas;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public boolean esHoraPermitida() {

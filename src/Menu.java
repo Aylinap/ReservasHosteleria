@@ -116,10 +116,28 @@ public class Menu {
     // son los dias de la semana
 
     public void mostrarHorariosDisponibles() {
-        System.out.println("--- Horarios disponibles para hacer una reserva ---");
-        for (LocalTime horario : Reserva.getHorariosReservas()) {
-            System.out.println(horario);
+        System.out.println("--- Horarios disponibles para reservar ---");
+        LocalTime[] horarios = Reserva.getHorariosReservas();
+        for (int i = 0; i < horarios.length; i++) {
+            System.out.println((i + 1) + ". " + horarios[i]);
         }
+    }
+
+    // seleccionar horario tipo opcion asi el usuario no ingresa manualmente el
+    // horario
+
+    public LocalTime seleccionarHorario() {
+        mostrarHorariosDisponibles();
+        System.out.println("Selecciona un horario:");
+        int opcion = scanner.nextInt();
+        scanner.nextLine();
+        LocalTime[] horarios = Reserva.getHorariosReservas();
+        if (opcion < 1 || opcion > horarios.length) {
+            System.out.println("Opción inválida. Por favor, seleccione un número válido para la reserva.");
+            return null;
+        }
+
+        return horarios[opcion - 1];
     }
 
     public void añadirReserva() {
@@ -147,17 +165,19 @@ public class Menu {
         String fechaReservaStr = scanner.nextLine();
         java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
 
-        mostrarHorariosDisponibles();
-
         // puedo hacer que el horario sea submenu ingresado como opcion y que no sea
         // ingresado manualmente
+        seleccionarHorario();
 
         System.out.println("Ingrese la hora de reserva (HH:mm): ");
         String horaReservaStr = scanner.nextLine();
         LocalTime horaReserva = LocalTime.parse(horaReservaStr);
 
+        System.out.println("¿Desea agregar algún comentario especial?: ");
+        String descripcion = scanner.nextLine();
+
         Reserva reservaNueva = new Reserva(nombreCliente, numeroMesa, numeroSala, fechaReserva, horaReserva,
-                numeroComensales);
+                numeroComensales, descripcion);
 
         try {
             ReservaDao reservaDao = new ReservaDao();
