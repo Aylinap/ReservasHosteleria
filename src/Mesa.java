@@ -8,6 +8,7 @@ public class Mesa {
     private boolean reservada;
     private String tipo_mesa;
 
+    
     public Mesa(int numero_mesa, Sala sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
             boolean reservada, String tipo_mesa) {
         this.numero_mesa = numero_mesa;
