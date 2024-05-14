@@ -7,6 +7,7 @@ public class ReservaDao {
 
     private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, dia_reserva, horaReserva, comensales, comentario) VALUES (?, ?, ?, ?, ?,?,?)";
     private static final String mostrar_todas_reservas = "selecto * from reserva";
+    // para leer el ultimo id de la reserva que se creó
     private static final String id_reserva = "Select id_reserva from reserva ORDER BY id_reserva DESC LIMIT 1";
     private static final String insertar_reserva_mesa_sala = "insert into reservaMesaSala (id_reserva, numero_mesa, numero_sala)";
 
@@ -51,9 +52,7 @@ public class ReservaDao {
 
     }
 
-    
-    // metodo para leer la reserva entrante y meterla en la tabla ReservaMesaSala
-
+    // metodo para leer la id_reserva entrante y meterla en la tabla ReservaMesaSala
 
     public int leerIDReserva() throws SQLException {
         Connection c = Dao.openConnection();

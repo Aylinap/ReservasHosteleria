@@ -1,15 +1,19 @@
+import java.util.ArrayList;
+
 public class Mesa {
-    private int numero_mesa;
-    private Sala sala;
+    private int numero_mesa; // quizas tenga que ser string
+    private int sala; // donde está la mesa
     private boolean disponible;
     private boolean se_puede_juntar;
     private int capacidad;
     private boolean ocupada;
     private boolean reservada;
     private String tipo_mesa;
+    private ArrayList<Mesa> lista_combinaciones_mesas;
+    // si son 8 comensales y las mesas x-x-x estan disponibles, se da la combinacion
+    // de mesas existentes dentro del arreglo.
 
-    
-    public Mesa(int numero_mesa, Sala sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
+    public Mesa(int numero_mesa, int sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
             boolean reservada, String tipo_mesa) {
         this.numero_mesa = numero_mesa;
         this.sala = sala;
@@ -30,11 +34,11 @@ public class Mesa {
         this.numero_mesa = numero_mesa;
     }
 
-    public Sala getSala() {
+    public int getSala() {
         return sala;
     }
 
-    public void setSala(Sala sala) {
+    public void setSala(int sala) {
         this.sala = sala;
     }
 
