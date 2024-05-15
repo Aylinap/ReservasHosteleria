@@ -33,6 +33,7 @@ public class Menu {
         System.out.println("4. Ver disponibilidad de las mesas");
         System.out.println("5. Ver cuántas mesas están ocupadas");
         System.out.println("6. Ver mesas reservadas pero no ocupadas");
+        System.out.println("7. Marcar mesa disponible nuevamente");
         System.out.print("Ingresa una opción: ");
 
     }
@@ -176,8 +177,9 @@ public class Menu {
         System.out.println("¿Desea agregar algún comentario especial?: ");
         String descripcion = scanner.nextLine();
 
-        Reserva reservaNueva = new Reserva(nombreCliente, numeroMesa, numeroSala, fechaReserva, horaReserva,
-                numeroComensales, descripcion);
+        // borre mesa del constructor, por ahora no se lo paso como parametro, luego ver
+        // como se lo paso al hacer la logica de la asignacion de la mesa
+        Reserva reservaNueva = new Reserva(nombreCliente, fechaReserva, horaReserva, numeroComensales, descripcion);
 
         try {
             ReservaDao reservaDao = new ReservaDao();

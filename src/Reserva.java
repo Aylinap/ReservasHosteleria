@@ -10,22 +10,22 @@ public class Reserva {
             LocalTime.of(14, 15)
     };
     private String nombre_cliente;
-    private int numero_mesa;
-    private int sala;
     private Date diaReserva;
     private LocalTime horaReserva;
     private int numero_comensales;
     private String descripcion;
+    private Mesa mesa;
 
-    public Reserva(String nombre_cliente, int numero_mesa, int sala, Date diaReserva, LocalTime horaReserva,
+    // no estoy pasando mesa en el constructor, solo la uso para usar la clase mesa
+    // dentro de reserva.
+    public Reserva(String nombre_cliente, Date diaReserva, LocalTime horaReserva,
             int numero_comensales, String descripcion) {
         this.nombre_cliente = nombre_cliente;
-        this.numero_mesa = numero_mesa;
-        this.sala = sala;
         this.diaReserva = diaReserva;
         this.horaReserva = horaReserva;
         this.numero_comensales = numero_comensales;
         this.descripcion = descripcion;
+
     }
 
     public LocalTime getHoraReserva() {
@@ -34,22 +34,6 @@ public class Reserva {
 
     public void setHoraReserva(LocalTime horaReserva) {
         this.horaReserva = horaReserva;
-    }
-
-    public int getNumero_mesa() {
-        return numero_mesa;
-    }
-
-    public void setNumero_mesa(int numero_mesa) {
-        this.numero_mesa = numero_mesa;
-    }
-
-    public int getSala() {
-        return sala;
-    }
-
-    public void setSala(int sala) {
-        this.sala = sala;
     }
 
     public String getNombre_cliente() {
@@ -96,6 +80,14 @@ public class Reserva {
             }
         }
         return false;
+    }
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
     }
 
 }

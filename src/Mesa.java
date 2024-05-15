@@ -2,27 +2,26 @@ import java.util.ArrayList;
 
 public class Mesa {
     private int numero_mesa; // quizas tenga que ser string
-    private int sala; // donde está la mesa
+    private Sala sala; // donde está la mesa
     private boolean disponible;
     private boolean se_puede_juntar;
     private int capacidad;
-    private boolean ocupada;
-    private boolean reservada;
-    private String tipo_mesa;
-    private ArrayList<Mesa> lista_combinaciones_mesas;
+    private boolean ocupada; // como paso un booleano a un string para insertarlo? tengo que parsearlo.
+    private boolean reservada; // podria pasarlos todos a un string y poner estado de la mesa nada mas, pero
+                               // sino como hare la logica dentro del programa
     // si son 8 comensales y las mesas x-x-x estan disponibles, se da la combinacion
     // de mesas existentes dentro del arreglo.
 
-    public Mesa(int numero_mesa, int sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
-            boolean reservada, String tipo_mesa) {
+    // borre Mesa mesa del constructor, por ahora no se lo paso como parametro.
+    public Mesa(int numero_mesa, Sala sala, boolean disponible, boolean se_puede_juntar, int capacidad, boolean ocupada,
+            boolean reservada) {
         this.numero_mesa = numero_mesa;
         this.sala = sala;
         this.disponible = disponible;
-        this.se_puede_juntar = se_puede_juntar;
+        this.se_puede_juntar = se_puede_juntar; // igual podria sacarlo del constructor
         this.capacidad = capacidad;
         this.ocupada = ocupada;
         this.reservada = reservada;
-        this.tipo_mesa = tipo_mesa;
 
     }
 
@@ -34,11 +33,11 @@ public class Mesa {
         this.numero_mesa = numero_mesa;
     }
 
-    public int getSala() {
+    public Sala getSala() {
         return sala;
     }
 
-    public void setSala(int sala) {
+    public void setSala(Sala sala) {
         this.sala = sala;
     }
 
@@ -80,14 +79,6 @@ public class Mesa {
 
     public void setReservada(boolean reservada) {
         this.reservada = reservada;
-    }
-
-    public String getTipo_mesa() {
-        return tipo_mesa;
-    }
-
-    public void setTipo_mesa(String tipo_mesa) {
-        this.tipo_mesa = tipo_mesa;
     }
 
 }

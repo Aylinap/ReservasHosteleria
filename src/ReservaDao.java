@@ -27,7 +27,7 @@ public class ReservaDao {
         pstmt.setInt(4, reservaNueva.getNumero_comensales());
         pstmt.setString(5, reservaNueva.getDescripcion());
 
-        System.out.println("Sentencia SQL para productos: " + pstmt.toString());
+        System.out.println("Sentencia SQL para reserva nueva: " + pstmt.toString());
         System.out.println("Reserva creada correctamente.");
         pstmt.executeUpdate();
         pstmt.close();
@@ -36,6 +36,19 @@ public class ReservaDao {
         // aqui podria leer el id de la reserva entrante y abrir conexion para ingresar
         // en la tabla nueva la informacion (Rserva_Mesa_Sala)
         int id_reserva = leerIDReserva();
+        int numeroMesa = reservaNueva.getMesa().getNumero_mesa(); // Ejemplo de cómo obtener el número de mesa desde el
+                                                                  // objeto Mesa asociado a la reserva
+        int sala = reservaNueva.getMesa().getSala().getNumero_sala();
+
+        String numeros_mesas_combinadas; // = getMesa().getLista_combinadas(); obtener el arreglo de las mesas
+                                         // combinadas o el metodo de obtener el la mesa elegida priori para tal
+                                         // comensal e insertarlo//
+
+        // logica para cambiar el estado de la mesa a reservada y luego ver como la
+        // cambio a ocupada y luego ver como se vuelven disponibles
+        if (reservaNueva.getMesa().isDisponible() == true) {
+
+        }
 
         c = Dao.openConnection();
         pstmt = c.prepareStatement(insertar_reserva_mesa_sala);
@@ -43,9 +56,10 @@ public class ReservaDao {
         // numero de mesa tiene que tener logica para ser otorgados de forma prioritaria
         // dependiendo del nunmero de comensales, asi que la logica siguiente hay que
         // adaptarla
-        pstmt.setInt(2, reservaNueva.getNumero_mesa());
-        pstmt.setInt(3, reservaNueva.getSala());
-        System.out.println("Sentencia SQL para Inventario: " + pstmt.toString());
+        pstmt.setInt(2, numeroMesa);
+        pstmt.setInt(3, sala);
+
+        System.out.println("Sentencia SQL para reserva-mesa: " + pstmt.toString());
         pstmt.executeUpdate();
         pstmt.close();
         c.close();
