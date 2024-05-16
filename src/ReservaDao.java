@@ -5,13 +5,13 @@ import java.sql.ResultSet;
 
 public class ReservaDao {
 
-    private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, dia_reserva, horaReserva, comensales, comentario) VALUES (?, ?, ?, ?, ?,?,?)";
+    private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, dia_reserva, horaReserva, comentario, comensales) VALUES (?, ?, ?, ?, ?,?,?)";
     private static final String mostrar_todas_reservas = "selecto * from reserva";
     // para leer el ultimo id de la reserva que se creó
     private static final String id_reserva = "Select id_reserva from reserva ORDER BY id_reserva DESC LIMIT 1";
-    private static final String insertar_reserva_mesa_sala = "insert into reservaMesaSala (id_reserva, numero_mesa, numero_sala)";
+    private static final String insertar_reserva_mesa = "insert into reservamesa (id_reserva, numero_mesa, numero_sala)";
 
-    public void insertarReserva(Reserva reservaNueva) throws SQLException {
+    public void insertarReserva(Reserva reservaNueva, Mesa mesa) throws SQLException {
 
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(insertarReservaNueva);
@@ -46,12 +46,10 @@ public class ReservaDao {
 
         // logica para cambiar el estado de la mesa a reservada y luego ver como la
         // cambio a ocupada y luego ver como se vuelven disponibles
-        if (reservaNueva.getMesa().isDisponible() == true) {
-
-        }
+        
 
         c = Dao.openConnection();
-        pstmt = c.prepareStatement(insertar_reserva_mesa_sala);
+        pstmt = c.prepareStatement(insertar_reserva_mesa);
         pstmt.setInt(1, id_reserva);
         // numero de mesa tiene que tener logica para ser otorgados de forma prioritaria
         // dependiendo del nunmero de comensales, asi que la logica siguiente hay que

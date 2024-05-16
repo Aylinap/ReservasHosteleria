@@ -6,6 +6,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         // llamo aqui a la clase menu
         Menu menu = new Menu(scanner);
+
         // usuario administrador
         Usuario admin = new Usuario(true);
         // usuario cliente

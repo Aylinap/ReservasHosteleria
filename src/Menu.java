@@ -6,10 +6,16 @@ import java.util.Scanner;
 
 public class Menu {
     private Scanner scanner;
-    private List<Reserva> reservasDisponibles;
+    private MesaDao mesaDao;
+   
 
     public Menu(Scanner scanner) {
         this.scanner = new Scanner(System.in);
+    }
+
+    public Menu(MesaDao mesaDao) {
+        this.mesaDao = mesaDao;
+
     }
 
     public void mostrarMenuPrincipal() {
@@ -28,12 +34,13 @@ public class Menu {
     public void mostrarSubMenuGestorReservas() {
         System.out.println("Submenú del Gestor de Reservas");
         System.out.println("1. Mostrar todas las reservas");
-        System.out.println("2. Mostrar reserva por nombre");
+        System.out.println("2. Buscar reserva por nombre");
         System.out.println("3. Eliminar todas las reservas");
-        System.out.println("4. Ver disponibilidad de las mesas");
-        System.out.println("5. Ver cuántas mesas están ocupadas");
-        System.out.println("6. Ver mesas reservadas pero no ocupadas");
-        System.out.println("7. Marcar mesa disponible nuevamente");
+        System.out.println("4. Eliminar una reserva");
+        System.out.println("5. Ver disponibilidad de las mesas");
+        System.out.println("6. Ver cuántas mesas están ocupadas");
+        System.out.println("7. Ver mesas reservadas pero no ocupadas");
+        System.out.println("8. Marcar mesa disponible nuevamente");
         System.out.print("Ingresa una opción: ");
 
     }
@@ -98,10 +105,9 @@ public class Menu {
                     // eliminar todas o una reserva falta agregar otra opcion
                     break;
                 case 4:
-                    // ver disponibilidad de las mesas(ocupada-disponible-reservada)
+
                     break;
                 case 5:
-                    // ver mesas ocupadas
                     break;
                 case 6:
                     // ver mesas reservadas pero no ocupadas
@@ -162,7 +168,8 @@ public class Menu {
         int numeroSala = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Ingrese la fecha de reserva (yyyy-MM-dd): ");
+        // 
+        System.out.println("Ingrese la fecha de reserva Lunes a viernes(yyyy-MM-dd): ");
         String fechaReservaStr = scanner.nextLine();
         java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
 
@@ -175,7 +182,7 @@ public class Menu {
         LocalTime horaReserva = LocalTime.parse(horaReservaStr);
 
         System.out.println("¿Desea agregar algún comentario especial?: ");
-        String descripcion = scanner.nextLine();
+        String descripcion = scanner.nextLine(); 
 
         // borre mesa del constructor, por ahora no se lo paso como parametro, luego ver
         // como se lo paso al hacer la logica de la asignacion de la mesa
@@ -189,4 +196,4 @@ public class Menu {
             System.out.println("Error al añadir la reserva: " + e.getMessage());
         }
     }
-}
+ }
