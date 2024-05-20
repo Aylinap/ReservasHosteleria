@@ -11,10 +11,8 @@ public class MesaGestor {
         this.mesaDao = new MesaDao();
         this.reservaDao = new ReservaDao();
         this.clienteDao = new ClienteDao();
-
     }
 
-    // print mostrar estado de las mesas
     public void mostrarEstadoMesa() throws SQLException {
         List<Mesa> mesas_estados = mesaDao.obtenerTodasLasMesas();
 
@@ -25,9 +23,8 @@ public class MesaGestor {
         }
     }
 
-    public ReservaAsignada asignarMesaYCrearReserva(int idCliente, Date diaReserva, LocalTime horaReserva,
-            int numComensales,
-            String descripcion) throws SQLException {
+    public ReservaAsignada asignarMesaYCrearReserva(int idCliente, java.sql.Date diaReserva, LocalTime horaReserva,
+            int numComensales, String descripcion) throws SQLException {
         Mesa mesa = mesaDao.obtenerMesasDisponibles(numComensales);
 
         if (mesa != null && mesa.getCapacidad() >= numComensales) {
@@ -35,12 +32,9 @@ public class MesaGestor {
 
             Reserva reserva = new Reserva(mesa.getNumero_mesa(), idCliente, diaReserva, horaReserva, numComensales,
                     descripcion);
-            reservaDao.insertaReservaNueva(reserva, mesa.getNumero_mesa());
-
             return new ReservaAsignada(reserva, mesa.getNumero_mesa());
         } else {
-            return null; 
+            return null;
         }
     }
-
 }
