@@ -9,23 +9,44 @@ public class Reserva {
             LocalTime.of(14, 00),
             LocalTime.of(14, 15)
     };
-    private String nombre_cliente;
+    private int id_reserva; // le paso un 0 en el constructor.
+    private int id_cliente;
     private Date diaReserva;
     private LocalTime horaReserva;
     private int numero_comensales;
     private String descripcion;
-    private Mesa mesa;
 
-    // no estoy pasando mesa en el constructor, solo la uso para usar la clase mesa
-    // dentro de reserva.
-    public Reserva(String nombre_cliente, Date diaReserva, LocalTime horaReserva,
+    /*
+     * int numeroMesa = reservaNueva.getMesa().getNumero_mesa(); // Ejemplo de cómo
+     * obtener el número de mesa desde el
+     * // objeto Mesa asociado a la reserva
+     */
+
+    public Reserva(int id_reserva, int id_cliente, Date diaReserva, LocalTime horaReserva,
             int numero_comensales, String descripcion) {
-        this.nombre_cliente = nombre_cliente;
+        this.id_reserva = id_reserva;
+        this.id_cliente = id_cliente;
         this.diaReserva = diaReserva;
         this.horaReserva = horaReserva;
         this.numero_comensales = numero_comensales;
         this.descripcion = descripcion;
 
+    }
+
+    public int getId_reserva() {
+        return id_reserva;
+    }
+
+    public void setId_reserva(int id_reserva) {
+        this.id_reserva = id_reserva;
+    }
+
+    public int getId_cliente() {
+        return id_cliente;
+    }
+
+    public void setId_cliente(int id_cliente) {
+        this.id_cliente = id_cliente;
     }
 
     public LocalTime getHoraReserva() {
@@ -34,14 +55,6 @@ public class Reserva {
 
     public void setHoraReserva(LocalTime horaReserva) {
         this.horaReserva = horaReserva;
-    }
-
-    public String getNombre_cliente() {
-        return nombre_cliente;
-    }
-
-    public void setNombre_cliente(String nombre_cliente) {
-        this.nombre_cliente = nombre_cliente;
     }
 
     public Date getDiaReserva() {
@@ -80,14 +93,6 @@ public class Reserva {
             }
         }
         return false;
-    }
-
-    public Mesa getMesa() {
-        return mesa;
-    }
-
-    public void setMesa(Mesa mesa) {
-        this.mesa = mesa;
     }
 
 }

@@ -5,53 +5,87 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.*;
 
-public class MesaDao {
-    private static final String obtener_mesas_disponible = "SELECT * FROM mesa WHERE estado_mesa = 'disponible'";
-    private static final String obtener_mesa_por_id = "SELECT * FROM mesa WHERE id = ?";
-    private static final String obtener_mesa_capacidad = "SELECT * FROM mesa WHERE capacidad >= ? AND estado_mesa = 'disponible'";
+import com.mysql.cj.xdevapi.Result;
 
-    public List<Mesa> obtenerMesas() throws SQLException {
+public class MesaDao {
+    private static final String obtener_mesas_disponible = "select * from mesa where estado_mesa = 'disponible'";
+    private static final String obtener_mesas = "select * from mesa";
+    private static final String obtener_mesa_capacidad = "select * from mesa where capacidad >= ? and estado_mesa = 'disponible'";
+    private static final String obtener_mesas_disponible_capacidad = "select numero_mesa, capacidad from mesas where capacidad >= ? and estado_mesa = 'disponible' order by capacidad";
+    private static final String actualizar_estado_mesa = "update mesa set estado_mesa = ? where numero_mesa = ?";
+
+    public List<Mesa> obtenerTodasLasMesas() throws SQLException {
         List<Mesa> mesas = new ArrayList<>();
         Connection c = Dao.openConnection();
-        PreparedStatement pstmt = c.prepareStatement(obtener_mesa_por_id);
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas);
         ResultSet rset = pstmt.executeQuery();
 
         while (rset.next()) {
-            
-            Mesa mesa = mapearMesa(rset);
-            mesas.add(mesa);
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            String estado = rset.getString("estado_mesa");
+            int sala = rset.getInt("sala");
+            mesas.add(new Mesa(id, capacidad, estado, sala)); // devuelvo un objeto Meesa sacado desde la bbdd
         }
 
         pstmt.executeUpdate();
         pstmt.close();
         c.close();
-
         return mesas;
     }
 
-    public List<Mesa> obtenerMesasDisponibles() throws SQLException {
+    // obtener todas disponibles dependiendo del numero de comensales
+    public Mesa obtenerMesasDisponibles(int numComensales) throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponible_capacidad);
+        ResultSet rset = pstmt.executeQuery();
+
+        // verificar si funciona el metodo la verdad
+        pstmt.setInt(1, numComensales);
+
+        if (rset.next()) {
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            int sala = rset.getInt("sala");
+            return new Mesa(id, capacidad, "disponible", sala);
+        }
+        pstmt.executeUpdate();
+        pstmt.close();
+        c.close();
+
+        return null;
+    }
+
+    // obtener el estado de todas las mesas disponibles independientes del numero de
+    // comensales
+    public List<Mesa> obtenerTodasDisponibles() throws SQLException {
+        List<Mesa> mesasDisponibles = new ArrayList<>();
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponible);
         ResultSet rset = pstmt.executeQuery();
-        List<Mesa> mesasDisponibles = new ArrayList<>();
 
         while (rset.next()) {
-            Mesa mesa = mapearMesa(rset);
-            mesasDisponibles.add(mesa);
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            String estado = rset.getString("estado_mesa");
+            int sala = rset.getInt("sala");
+            mesasDisponibles.add(new Mesa(id, capacidad, estado, sala));
         }
 
         return mesasDisponibles;
     }
 
-    // Método para mapear un resultado de consulta a un objeto Mesa
-    private Mesa mapearMesa(ResultSet resultSet) throws SQLException {
-        Mesa mesa = new Mesa();
-        mesa.setNumero_mesa(resultSet.getInt("numero_mesa"));
-        mesa.setCapacidad(resultSet.getInt("capacidad"));
+    // actualizar el estado de la mesa: 
+    public void actualizarEstadoMesa(int numero_mesa, String estado) throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(actualizar_estado_mesa);
+        ResultSet rset = pstmt.executeQuery();
 
-        return mesa;
+        pstmt.setInt(1, numero_mesa);
+        pstmt.setString(2, estado);
+        pstmt.executeUpdate();
+        pstmt.close();
+        c.close();
     }
 
-
-   
 }

@@ -1,9 +1,11 @@
 public class Cliente {
+    private int id_cliente;
     private String nombre;
     private int telefono;
     private String email;
 
-    public Cliente(String nombre, int telefono, String email) {
+    public Cliente(int id_cliente, String nombre, int telefono, String email) {
+        this.id_cliente = id_cliente;
         this.nombre = nombre;
         this.telefono = telefono;
         this.email = email;
@@ -36,6 +38,14 @@ public class Cliente {
     @Override
     public String toString() {
         return "Cliente [nombre=" + nombre + ", telefono=" + telefono + ", email=" + email + "]";
+    }
+
+    public int getId_cliente() {
+        return id_cliente;
+    }
+
+    public void setId_cliente(int id_cliente) {
+        this.id_cliente = id_cliente;
     }
 
 }
