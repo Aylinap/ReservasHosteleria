@@ -7,15 +7,14 @@ import java.util.Scanner;
 public class Menu {
     private Scanner scanner;
     private MesaDao mesaDao;
-   
+    private ClienteDao clienteDao;
+    private MesaGestor mesaGestor;
 
     public Menu(Scanner scanner) {
         this.scanner = new Scanner(System.in);
-    }
-
-    public Menu(MesaDao mesaDao) {
-        this.mesaDao = mesaDao;
-
+        this.mesaDao = new MesaDao();
+        this.clienteDao = new ClienteDao();
+        this.mesaGestor = new MesaGestor(mesaDao, clienteDao);
     }
 
     public void mostrarMenuPrincipal() {
@@ -70,16 +69,16 @@ public class Menu {
                 if (usuario != null && usuario.isEsAdmin()) {
                     accederGestorReservas();
                 } else {
-                    System.out.println("Acceso denegado. Debe ser administrador para acceder al Gestor de Reservas.");
+                    System.out.println("Debe ser administrador para acceder al Gestor de Reservas.");
                 }
                 break;
             default:
-                System.out.println("Opción no válida. Por favor, seleccione una opción del menú.");
+                System.out.println("Por favor, seleccione una opción del menú.");
         }
     }
 
     public void accederGestorReservas() {
-        System.out.println("Por favor, inicie sesión como administrador para acceder al Gestor de Reservas.");
+        System.out.println("Por favor, inicia sesión como administrador para acceder al Gestor de Reservas.");
         System.out.print("Usuario: ");
         String user = scanner.nextLine();
         System.out.print("Contraseña: ");
@@ -113,10 +112,10 @@ public class Menu {
                     // ver mesas reservadas pero no ocupadas
                     break;
                 default:
-                    System.out.println("Opción no válida. Por favor, seleccione una opción válida.");
+                    System.out.println("Por favor, seleccione una opción válida.");
             }
         } else {
-            System.out.println("Credenciales incorrectas. Acceso denegado.");
+            System.out.println("Credenciales incorrectas.");
         }
     }
     // falta que liste el horario disponibles para las reservas y los dias que solo
@@ -140,7 +139,7 @@ public class Menu {
         scanner.nextLine();
         LocalTime[] horarios = Reserva.getHorariosReservas();
         if (opcion < 1 || opcion > horarios.length) {
-            System.out.println("Opción inválida. Por favor, seleccione un número válido para la reserva.");
+            System.out.println("Selecciona un número válido para la reserva.");
             return null;
         }
 
@@ -148,52 +147,60 @@ public class Menu {
     }
 
     public void añadirReserva() {
-        System.out.println("\n--- Añadir Reserva ---");
-
-        System.out.println("Ingrese el nombre del cliente: ");
-        String nombreCliente = scanner.nextLine();
-
-        System.out.println("¿Cuántas personas vienen contigo?");
-        int numeroComensales = scanner.nextInt();
-        scanner.nextLine();
-        // el numero de la mesa deberia ser automatico depende de la cantidad de
-        // comensales.
-        System.out.println("Ingrese el número de mesa: ");
-        int numeroMesa = scanner.nextInt();
-        scanner.nextLine();
-
-        // numero sala tiene que asignarse automatico o depende de la cantidad de
-        // comensales.
-        System.out.println("Ingrese el número de sala: ");
-        int numeroSala = scanner.nextInt();
-        scanner.nextLine();
-
-        // 
-        System.out.println("Ingrese la fecha de reserva Lunes a viernes(yyyy-MM-dd): ");
-        String fechaReservaStr = scanner.nextLine();
-        java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
-
-        // puedo hacer que el horario sea submenu ingresado como opcion y que no sea
-        // ingresado manualmente
-        seleccionarHorario();
-
-        System.out.println("Ingrese la hora de reserva (HH:mm): ");
-        String horaReservaStr = scanner.nextLine();
-        LocalTime horaReserva = LocalTime.parse(horaReservaStr);
-
-        System.out.println("¿Desea agregar algún comentario especial?: ");
-        String descripcion = scanner.nextLine(); 
-
-        // borre mesa del constructor, por ahora no se lo paso como parametro, luego ver
-        // como se lo paso al hacer la logica de la asignacion de la mesa
-        Reserva reservaNueva = new Reserva(nombreCliente, fechaReserva, horaReserva, numeroComensales, descripcion);
-
         try {
-            ReservaDao reservaDao = new ReservaDao();
-            reservaDao.insertarReserva(reservaNueva);
-            System.out.println("Reserva añadida correctamente.");
+            System.out.println("\n--- Añadir Reserva ---");
+
+            System.out.println("Ingresa tu nombre: ");
+            String nombreCliente = scanner.nextLine();
+
+            System.out.println("Ingresa tu número de teléfono:");
+            int telefono = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.println("Ingresa tu e-mail:");
+            String email = scanner.nextLine();
+
+            Cliente cliente = new Cliente(0, nombreCliente, telefono, email);
+            int idcliente = clienteDao.insertarCliente(cliente);
+
+            mesaGestor.mostrarEstadoMesa();
+
+            System.out.println("¿Cuántas personas vienen contigo?");
+            int numeroComensales = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.println("Ingresa la fecha que quieres reservar (Lunes a viernes -> yyyy-MM-dd): ");
+            String fechaReservaStr = scanner.nextLine();
+            java.sql.Date fechaReserva = java.sql.Date.valueOf(fechaReservaStr);
+
+            LocalTime horaReserva = seleccionarHorario();
+
+            if (horaReserva == null) {
+                System.out.println("No se puede seleccionar el horario de reserva.");
+                return;
+            }
+
+            System.out.println("¿Desea agregar algún comentario especial?: ");
+            String descripcion = scanner.nextLine();
+
+            ReservaAsignada reservaAsignada = mesaGestor.asignarMesaYCrearReserva(idcliente, fechaReserva, horaReserva,
+                    numeroComensales, descripcion);
+
+            if (reservaAsignada != null) {
+                Reserva reservaNueva = reservaAsignada.getReserva();
+                int numeroMesa = reservaAsignada.getNumeroMesa();
+
+                try {
+                    ReservaDao reservaDao = new ReservaDao();
+                    reservaDao.insertaReservaNueva(reservaNueva, numeroMesa);
+                    System.out.println("Reserva añadida correctamente.");
+                } catch (SQLException e) {
+                    System.out.println("Error al añadir la reserva: " + e.getMessage());
+                }
+            }
         } catch (SQLException e) {
             System.out.println("Error al añadir la reserva: " + e.getMessage());
         }
     }
- }
+
+}

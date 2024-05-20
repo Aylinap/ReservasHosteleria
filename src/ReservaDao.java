@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 
 public class ReservaDao {
 
-    private static final String insertarReservaNueva = "INSERT INTO reserva (nombre_cliente, dia_reserva, horaReserva, comentario, comensales) VALUES (?, ?, ?, ?, ?,?,?)";
-    private static final String mostrar_todas_reservas = "selecto * from reserva";
+    private static final String insertarReservaNueva = "insert into reserva (id_cliente, dia_reserva, horaReserva, comensales, comentario) VALUES (?, ?, ?, ?, ?,?,?)";
+    private static final String mostrar_todas_reservas = "selecto * from reserva"; // sacar sub consulta del nombre del
+                                                                                   // cliente (cambiar)
     // para leer el ultimo id de la reserva que se creó
     private static final String id_reserva = "Select id_reserva from reserva ORDER BY id_reserva DESC LIMIT 1";
     private static final String insertar_reserva_mesa = "insert into reservamesa (id_reserva, numero_mesa, numero_sala)";
@@ -17,6 +18,8 @@ public class ReservaDao {
     // lo otro seria que solo tenga como String nombre_cliente y solo guarde esa
     // informacion porque no necesita mas
 
+    // metodo insertar reserva nueva en tabla reserva y tabla reservanueva inserta
+    // id_reserva e id_cliente.
     public void insertaReservaNueva(Reserva nuevaReserva, int numero_mesa) throws SQLException {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(insertarReservaNueva);
@@ -32,7 +35,6 @@ public class ReservaDao {
         pstmt.setTime(3, Time.valueOf(nuevaReserva.getHoraReserva()));
         pstmt.setInt(4, nuevaReserva.getNumero_comensales());
         pstmt.setString(5, nuevaReserva.getDescripcion());
-        pstmt.setInt(6, numero_mesa);
 
         pstmt.executeUpdate();
         pstmt.close();
@@ -49,7 +51,7 @@ public class ReservaDao {
         c = Dao.openConnection();
         pstmt = c.prepareStatement(insertar_reserva_mesa);
         pstmt.setInt(1, id_reserva);
-        pstmt.setInt(1, numero_mesa);
+        pstmt.setInt(2, numero_mesa);
 
         pstmt.executeUpdate();
         pstmt.close();
@@ -156,5 +158,29 @@ public class ReservaDao {
         pstmt.close();
         c.close();
     }
+
+    // public void mostrarTodasReservas() throws SQLException {
+    // try (Connection c = getConnection();
+    // PreparedStatement pstmt = c.prepareStatement(mostrar_todas_reservas);
+    // ResultSet rset = pstmt.executeQuery()) {
+
+    // System.out.println("----- Todas las reservas -----");
+
+    // while (rset.next()) {
+    // String nombreCliente = rset.getString("nombre_cliente");
+    // int idReserva = rset.getInt("id_reserva");
+    // Date diaReserva = rset.getDate("dia_reserva");
+    // Time horaReserva = rset.getTime("hora_reserva");
+
+    // System.out.printf(
+    // "\nNombre Cliente: %s" +
+    // "\nId de la Reserva: %d" +
+    // "\nFecha de la Reserva: %s" +
+    // "\nHora de la Reserva: %s\n",
+    // nombreCliente, idReserva, diaReserva.toString(), horaReserva.toString());
+    // }
+    // }
+
+    // }
 
 }

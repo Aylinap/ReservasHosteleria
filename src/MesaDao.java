@@ -28,7 +28,6 @@ public class MesaDao {
             mesas.add(new Mesa(id, capacidad, estado, sala)); // devuelvo un objeto Meesa sacado desde la bbdd
         }
 
-        pstmt.executeUpdate();
         pstmt.close();
         c.close();
         return mesas;
@@ -49,7 +48,7 @@ public class MesaDao {
             int sala = rset.getInt("sala");
             return new Mesa(id, capacidad, "disponible", sala);
         }
-        pstmt.executeUpdate();
+
         pstmt.close();
         c.close();
 
@@ -75,14 +74,14 @@ public class MesaDao {
         return mesasDisponibles;
     }
 
-    // actualizar el estado de la mesa: 
+    // actualizar el estado de la mesa:
     public void actualizarEstadoMesa(int numero_mesa, String estado) throws SQLException {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(actualizar_estado_mesa);
-        ResultSet rset = pstmt.executeQuery();
 
         pstmt.setInt(1, numero_mesa);
         pstmt.setString(2, estado);
+
         pstmt.executeUpdate();
         pstmt.close();
         c.close();

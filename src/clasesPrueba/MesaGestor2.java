@@ -44,7 +44,7 @@ public class MesaGestor2 {
     public void asignarMesa(int numComensales) {
         // primero verificar que mesas estan disponibles:
 
-        mesasDisponibles();
+        // mesasDisponibles();
         // Verificar si el número de comensales coincide exactamente con la capacidad de
         // una mesa prioritaria
         if (capacidadMesas.containsValue(numComensales)
@@ -164,7 +164,7 @@ public class MesaGestor2 {
 
     // metodo para ver si esta disponible
 
-    public void mesasDisponibles() throws SQLException {
-        mesaDao.obtenerMesasDisponibles();
-    }
+    // public void mesasDisponibles() throws SQLException {
+    // mesaDao.obtenerMesasDisponibles();
+    // }
 }
