@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.ResultSet;
 
 public class ReservaDao {
@@ -19,33 +20,40 @@ public class ReservaDao {
     public void insertaReservaNueva(Reserva nuevaReserva, int numero_mesa) throws SQLException {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(insertarReservaNueva);
-        
+
         if (!nuevaReserva.esHoraPermitida()) {
             System.out.println("Lo sentimos, no se pueden hacer reservas fuera del horario permitido.");
             return;
         }
-
-        pstmt.setInt(1, );
+        // verificar si se obtiene el id_cliente desde el cliente que se creo en la base
+        // de datos, recordar que es autoincrement en la bbdd
+        pstmt.setInt(1, nuevaReserva.getId_cliente());
+        pstmt.setDate(2, new java.sql.Date(nuevaReserva.getDiaReserva().getTime()));
+        pstmt.setTime(3, Time.valueOf(nuevaReserva.getHoraReserva()));
+        pstmt.setInt(4, nuevaReserva.getNumero_comensales());
+        pstmt.setString(5, nuevaReserva.getDescripcion());
+        pstmt.setInt(6, numero_mesa);
 
         pstmt.executeUpdate();
         pstmt.close();
-        c.close(); 
-        // aqui tendria que cerrar la conexion y abrirla para inserta la info en reservaMesa
+        c.close();
+        // aqui tendria que cerrar la conexion y abrirla para inserta la info en
+        // reservaMesa
         // donde iria el numero de la mesa y el id de la reserva
         // entonces aqui leo el id de la reserva que se creo,
         int id_reserva = leerIDReserva();
 
-        // luego abro de nuevo la conexion e inserto esa informacion en la tabla de reservaMesa
+        // luego abro de nuevo la conexion e inserto esa informacion en la tabla de
+        // reservaMesa
         // la tabla reservaMesa solo tiene id_reserva y id_mesa
         c = Dao.openConnection();
         pstmt = c.prepareStatement(insertar_reserva_mesa);
-        pstmt.setInt(1, id_reserva); 
+        pstmt.setInt(1, id_reserva);
         pstmt.setInt(1, numero_mesa);
-    
+
         pstmt.executeUpdate();
         pstmt.close();
-        c.close(); 
-
+        c.close();
 
     }
     // public void insertarReserva(Reserva reservaNueva, Mesa mesa) throws
@@ -126,7 +134,8 @@ public class ReservaDao {
         return idReserva;
     }
 
-    // metodo obtener el id del cliente pero tendria que hacer la insercion de datos del cliente que no es muy importante tampoco
+    // metodo obtener el id del cliente pero tendria que hacer la insercion de datos
+    // del cliente que no es muy importante tampoco
 
     // mostrar todas las reservas
 

@@ -3,12 +3,15 @@ import java.util.*;
 import java.time.LocalTime;
 
 public class MesaGestor {
+    private ClienteDao clienteDao;
     private MesaDao mesaDao;
     private ReservaDao reservaDao;
 
-    public MesaGestor(MesaDao mesaDao, ReservaDao reservaDao) {
+    public MesaGestor(ClienteDao clienteDao, MesaDao mesaDao, ReservaDao reservaDao) {
         mesaDao = new MesaDao();
         reservaDao = new ReservaDao();
+        clienteDao = new ClienteDao();
+
     }
 
     // print mostrar estado de las mesas
@@ -23,21 +26,21 @@ public class MesaGestor {
     }
 
     // metodo asignar mesa
-    public String asignarMesa(int id_cliente, Date diaReserva, LocalTime horaReserva, int numero_comensales,
+    public String asignarMesaYCrearReserva(int idCliente, Date diaReserva, LocalTime horaReserva, int numComensales,
             String descripcion) throws SQLException {
-        Mesa mesa = mesaDao.obtenerMesasDisponibles(numero_comensales);
+        Mesa mesa = mesaDao.obtenerMesasDisponibles(numComensales);
 
         if (mesa != null) {
-            mesaDao.actualizarEstadoMesa(numero_comensales, "ocupada");
+            mesaDao.actualizarEstadoMesa(mesa.getNumero_mesa(), "ocupada");
 
-            Reserva reserva = new Reserva(0, id_cliente, diaReserva, horaReserva, numero_comensales, descripcion);
-            reservaDao.insertarReserva(reserva, mesa.getNumero_mesa());
+            Reserva reserva = new Reserva(0, idCliente, diaReserva, horaReserva, numComensales, descripcion);
+            reservaDao.insertaReservaNueva(reserva, mesa.getNumero_mesa());
 
-            return String.format("Se le ha asignado la mesa: " + mesa.getNumero_mesa() + "en Sala: " + mesa.getSala());
+            return String.format("Se ha creado una reserva en la mesa %d con capacidad para %d comensales.",
+                    mesa.getNumero_mesa(), mesa.getCapacidad());
+        } else {
+            return "Lo siento, no hay mesas disponibles para ese número de comensales en este momento.";
         }
-
-        return String.format("Lo siento, no hay mesas disponibles para ese número de comensales");
     }
-
 
 }
