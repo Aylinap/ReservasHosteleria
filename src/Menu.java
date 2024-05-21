@@ -140,7 +140,7 @@ public class Menu {
         scanner.nextLine();
         LocalTime[] horarios = Reserva.getHorariosReservas();
         if (opcion < 1 || opcion > horarios.length) {
-            System.out.println("Selecciona un horario válido para la reserva.");
+            System.out.println("Selecciona un horario valido para la reserva");
             return null;
         }
         return horarios[opcion - 1];
@@ -160,6 +160,7 @@ public class Menu {
             System.out.println("Ingresa tu e-mail:");
             String email = scanner.nextLine();
 
+            // se crea el objeto cliente con los datos obtenidos, 
             Cliente cliente = new Cliente(0, nombreCliente, telefono, email);
             int idcliente = clienteDao.insertarCliente(cliente);
             System.out.println("----------------");

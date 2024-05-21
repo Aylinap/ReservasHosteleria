@@ -28,11 +28,12 @@ public class ClienteDao {
         int filafectada = pstmt.executeUpdate();
         // si la fila es igual a 0 o no existe
         if (filafectada == 0) {
+
             // lanza una exception, tambien puede lanzar un print, solo es para indentificar
             // que no funcionó
             throw new SQLException("El insert del cliente falló, no se modificaron filas(no se agregó).");
         }
-
+        
         ResultSet generatedKeys = pstmt.getGeneratedKeys();
         int idgeneradaCliente = 0;
         if (generatedKeys.next()) {
