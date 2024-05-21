@@ -85,6 +85,7 @@ public class Reserva {
         this.descripcion = descripcion;
     }
 
+    // metodo que verifica que si el horario es permitido.
     public boolean esHoraPermitida() {
         LocalTime horaReserva = this.getHoraReserva();
         for (LocalTime franja : horarios_reservas) {

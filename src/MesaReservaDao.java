@@ -9,6 +9,10 @@ public class MesaReservaDao {
     private static final String obtener_estado_mesas = "select estado_mesa from reservamesa ";
     private static final String cambiar_estado_mesa = "update reservamesa set estado_mesa=? where  ";
 
+    // ================================================================
+    // CLASE que todavia no se está usando o quizas no se vaya a usar nunca.
+    // =================================================================
+
     // despues este metodo llamarlo en crear reserva aunque no se si pueden llamar
     // entre los dao.
     // public void insertar_reserva_mesa(Mesa nuevaMesa) throws SQLException {
