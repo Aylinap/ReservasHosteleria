@@ -104,7 +104,7 @@ public class Menu {
                     // eliminar todas o una reserva falta agregar otra opcion
                     break;
                 case 4:
-
+                    // cualquiera que falte
                     break;
                 case 5:
                     break;
@@ -122,16 +122,17 @@ public class Menu {
     // son los dias de la semana
 
     public void mostrarHorariosDisponibles() {
+        System.out.println("");
         System.out.println("--- Horarios disponibles para reservar ---");
         LocalTime[] horarios = Reserva.getHorariosReservas();
         for (int i = 0; i < horarios.length; i++) {
             System.out.println((i + 1) + ". " + horarios[i]);
         }
+        System.out.println("");
     }
 
     // seleccionar horario tipo opcion asi el usuario no ingresa manualmente el
     // horario
-
     public LocalTime seleccionarHorario() {
         mostrarHorariosDisponibles();
         System.out.println("Selecciona un horario:");
@@ -139,16 +140,15 @@ public class Menu {
         scanner.nextLine();
         LocalTime[] horarios = Reserva.getHorariosReservas();
         if (opcion < 1 || opcion > horarios.length) {
-            System.out.println("Selecciona un número válido para la reserva.");
+            System.out.println("Selecciona un horario válido para la reserva.");
             return null;
         }
-
         return horarios[opcion - 1];
     }
 
     public void añadirReserva() {
         try {
-            System.out.println("\n--- Añadir Reserva ---");
+            System.out.println("\n---- Añadir Reserva ----");
 
             System.out.println("Ingresa tu nombre: ");
             String nombreCliente = scanner.nextLine();
@@ -162,7 +162,9 @@ public class Menu {
 
             Cliente cliente = new Cliente(0, nombreCliente, telefono, email);
             int idcliente = clienteDao.insertarCliente(cliente);
+            System.out.println("----------------");
             System.out.println("ID del cliente generado: " + idcliente);
+            System.out.println("----------------");
 
             mesaGestor.mostrarEstadoMesa();
 
@@ -181,7 +183,7 @@ public class Menu {
                 return;
             }
 
-            System.out.println("¿Desea agregar algún comentario especial?: ");
+            System.out.println("¿Deseas agregar algún comentario especial?: ");
             String descripcion = scanner.nextLine();
 
             ReservaAsignada reservaAsignada = mesaGestor.asignarMesaYCrearReserva(idcliente, fechaReserva, horaReserva,
@@ -192,6 +194,8 @@ public class Menu {
                 int numeroMesa = reservaAsignada.getNumeroMesa();
 
                 try {
+
+                    System.out.println("=========================================");
                     System.out.println("Reservando con los siguientes detalles:");
                     System.out.println("ID Cliente: " + reservaNueva.getId_cliente());
                     System.out.println("Fecha Reserva: " + reservaNueva.getDiaReserva());

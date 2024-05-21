@@ -18,10 +18,10 @@ public class ClienteDao {
         pstmt.setInt(2, nuevoCliente.getTelefono());
         pstmt.setString(3, nuevoCliente.getEmail());
 
-        int rowsAffected = pstmt.executeUpdate();
+        int filafectada = pstmt.executeUpdate();
 
-        if (rowsAffected == 0) {
-            throw new SQLException("La inserción del cliente falló, no se modificaron filas.");
+        if (filafectada == 0) {
+            throw new SQLException("La inserción del cliente falló, no se modificaron filas(no se agregó).");
         }
 
         ResultSet generatedKeys = pstmt.getGeneratedKeys();
@@ -29,7 +29,7 @@ public class ClienteDao {
         if (generatedKeys.next()) {
             generatedId = generatedKeys.getInt(1);
         } else {
-            throw new SQLException("La inserción del cliente falló, no se generaron claves.");
+            throw new SQLException("La inserción del cliente falló, no se generaron las id(claves).");
         }
 
         pstmt.close();
@@ -37,4 +37,6 @@ public class ClienteDao {
 
         return generatedId;
     }
+
+    // 
 }

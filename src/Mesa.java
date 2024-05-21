@@ -13,8 +13,8 @@ public class Mesa {
         this.sala = sala;
 
     }
-
-    // constructor de mesa que pasa el numero de mesa.
+    
+    // constructor de mesa que pasa el numero de mesa.( al final no lo ocupé)
     public Mesa(int numero_mesa) {
         this.numero_mesa = numero_mesa;
     }
