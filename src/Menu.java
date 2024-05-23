@@ -32,6 +32,7 @@ public class Menu {
 
     public void mostrarSubMenuGestorReservas() {
         System.out.println("Submenú del Gestor de Reservas");
+        System.out.println("");
         System.out.println("1. Mostrar todas las reservas");
         System.out.println("2. Buscar reserva por nombre");
         System.out.println("3. Eliminar todas las reservas");
@@ -46,77 +47,86 @@ public class Menu {
 
     // parametro que le paso es el usuario
     public void ejecutarMenu(Usuario usuario) {
+        Scanner scanner = new Scanner(System.in);
+        int opcion;
+        do {
+            mostrarMenuPrincipal();
+            opcion = scanner.nextInt();
+            scanner.nextLine();
 
-        mostrarMenuPrincipal();
-        // declaras la variable y la guardas
-        int opcion = scanner.nextInt();
-        scanner.nextLine(); // limpia el scanner
-
-        switch (opcion) {
-            case 1:
-                añadirReserva();
-                break;
-            case 2:
-                // mostrar reserva por nombre
-                break;
-            case 3:
-                // cancelar una reserva
-                break;
-            case 4:
-                // modificar una reserva
-                break;
-            case 5:
-                if (usuario != null && usuario.isEsAdmin()) {
-                    accederGestorReservas();
-                } else {
-                    System.out.println("Debe ser administrador para acceder al Gestor de Reservas.");
-                }
-                break;
-            default:
-                System.out.println("Por favor, seleccione una opción del menú.");
-        }
-    }
-
-    public void accederGestorReservas() {
-        System.out.println("Por favor, inicia sesión como administrador para acceder al Gestor de Reservas.");
-        System.out.print("Usuario: ");
-        String user = scanner.nextLine();
-        System.out.print("Contraseña: ");
-        String pass = scanner.nextLine();
-
-        if (user.equals("admin") && pass.equals("admin123")) {
-            // claves para ingresar al gestor se puede modificar para
-            // que sea tomado desde otro lado o desde la base de
-            // datos tambien
-            mostrarSubMenuGestorReservas();
-            int opcion = scanner.nextInt();
-            scanner.nextLine(); // Limpiar el scanner
-
-            // sub menu si es administrador
             switch (opcion) {
                 case 1:
-                    // mostrar todas las reservas
+                    añadirReserva();
                     break;
                 case 2:
-                    // mostrar reserva por nombre
+                    buscarReservaPorNombre();
                     break;
                 case 3:
-                    // eliminar todas o una reserva falta agregar otra opcion
+                    // Cancelar una reserva
                     break;
                 case 4:
-                    // cualquiera que falte
+                    // Modificar una reserva
                     break;
                 case 5:
-                    break;
-                case 6:
-                    // ver mesas reservadas pero no ocupadas
+                    if (usuario != null && usuario.isEsAdmin()) {
+                        accederGestorReservas();
+                    } else {
+                        System.out.println("Debe ser administrador para acceder al Gestor de Reservas.");
+                    }
                     break;
                 default:
                     System.out.println("Por favor, seleccione una opción válida.");
             }
-        } else {
-            System.out.println("Credenciales incorrectas.");
-        }
+        } while (opcion < 1 || opcion > 5);
+
+    }
+
+    public void accederGestorReservas() {
+        boolean credencialesCorrectas = false;
+
+        do {
+            System.out.println("Por favor, inicia sesión como administrador para acceder al Gestor de Reservas.");
+            System.out.print("Usuario: ");
+            String user = scanner.nextLine();
+            System.out.print("Contraseña: ");
+            String pass = scanner.nextLine();
+
+            if (user.equals("admin") && pass.equals("admin123")) {
+                // Claves para ingresar al gestor se pueden modificar para
+                // que sean tomadas desde otro lugar o desde la base de
+                // datos también
+                mostrarSubMenuGestorReservas();
+                int opcion = scanner.nextInt();
+                scanner.nextLine();
+
+                // Submenu si es administrador
+                switch (opcion) {
+                    case 1:
+                        mostrarReservasTodas();
+                        break;
+                    case 2:
+                        buscarReservaPorNombre();
+                        break;
+                    case 3:
+                        // Eliminar todas o una reserva, falta agregar otra opción
+                        break;
+                    case 4:
+                        // Cualquiera que falte
+                        break;
+                    case 5:
+                        mostrarTodasMesasDisponibles();
+                        break;
+                    case 6:
+                        // Ver mesas reservadas pero no ocupadas
+                        break;
+                    default:
+                        System.out.println("Por favor, seleccione una opción válida.");
+                }
+                credencialesCorrectas = true;
+            } else {
+                System.out.println("Credenciales incorrectas. Vuelve a intentarlo.");
+            }
+        } while (!credencialesCorrectas);
     }
     // falta que liste el horario disponibles para las reservas y los dias que solo
     // son los dias de la semana
@@ -146,6 +156,7 @@ public class Menu {
         return horarios[opcion - 1];
     }
 
+    // guardar desde el teclado la info del cliente
     public void añadirReserva() {
         try {
             System.out.println("\n---- Añadir Reserva ----");
@@ -160,16 +171,16 @@ public class Menu {
             System.out.println("Ingresa tu e-mail:");
             String email = scanner.nextLine();
 
-            // se crea el objeto cliente con los datos obtenidos, 
+            // se crea el objeto cliente con los datos obtenidos,
             Cliente cliente = new Cliente(0, nombreCliente, telefono, email);
             int idcliente = clienteDao.insertarCliente(cliente);
+
+            // mover el id a administrado o solo sacarlo.
             System.out.println("----------------");
             System.out.println("ID del cliente generado: " + idcliente);
             System.out.println("----------------");
 
-            mesaGestor.mostrarEstadoMesa();
-
-            System.out.println("¿Cuántas personas vienen contigo?");
+            System.out.println("¿Cuántas personas van a comer?");
             int numeroComensales = scanner.nextInt();
             scanner.nextLine();
 
@@ -217,4 +228,34 @@ public class Menu {
         }
     }
 
+    // mostrar todas las reservas en submenu de administrador
+    public void mostrarReservasTodas() {
+        try {
+            reservaDao.obtenerTodasLasReservas();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // metodo bsucar reserva por nombre, cliente:
+    public void buscarReservaPorNombre() {
+        try {
+            System.out.print("Ingresa el nombre del cliente para buscar la reserva: ");
+            String nombreCliente = scanner.nextLine();
+            reservaDao.mostrarReservaPorNombre(nombreCliente);
+        } catch (SQLException e) {
+            System.out.println("No se ha encontrado reserva con ese nombre");
+        }
+    }
+
+    // metodod mostrar mesas todas mesas disponibles
+    public void mostrarTodasMesasDisponibles() {
+        try {
+            System.out.println("----Mesas disponibles----");
+            mesaDao.mostrarTodasLasMesasDisponibles();
+            ;
+        } catch (SQLException e) {
+            System.out.println(" No hay mesas disponibles");
+        }
+    }
 }

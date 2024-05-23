@@ -23,7 +23,8 @@ public class MesaDao {
             int capacidad = rset.getInt("capacidad");
             String estado = rset.getString("estado_mesa");
             int sala = rset.getInt("sala");
-            mesas.add(new Mesa(id, capacidad, estado, sala));
+            boolean combinable = rset.getBoolean("combinable");
+            mesas.add(new Mesa(id, capacidad, estado, sala, combinable));
         }
 
         rset.close();
@@ -39,7 +40,7 @@ public class MesaDao {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(obtener_mesa_disponible_capacidad);
 
-        // preguntar-->
+        
         pstmt.setInt(1, numComensales);
         ResultSet rset = pstmt.executeQuery();
 
@@ -49,18 +50,64 @@ public class MesaDao {
             int id = rset.getInt("numero_mesa");
             int capacidad = rset.getInt("capacidad");
             int sala = rset.getInt("sala");
+            boolean combinable = rset.getBoolean("combinable");
             // cierro la conexion
             rset.close();
             pstmt.close();
             c.close();
             // retorno un objeto mesa con la info obtenida
-            return new Mesa(id, capacidad, "disponible", sala);
+            return new Mesa(id, capacidad, "disponible", sala, combinable);
         }
 
         rset.close();
         pstmt.close();
         c.close();
         return null;
+    }
+
+    // metodo obtener todas las mesas disponibles sin pasarle la cantidad de
+    // comensales:
+    public void mostrarTodasLasMesasDisponibles() throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponible);
+        ResultSet rset = pstmt.executeQuery();
+
+        System.out.println("-------------Mesas Disponibles------------- ");
+        while (rset.next()) {
+            System.out.println(
+                    "=====================================" +
+                            "\n ID de la mesa: " + rset.getInt("numero_mesa") +
+                            "\n Capacidad: " + rset.getInt("capacidad") +
+                            "\n Sala: " + rset.getInt("sala") +
+                            "\n Estado: " + rset.getString("estado_mesa") +
+                            "\n =====================================");
+        }
+
+        pstmt.close();
+        c.close();
+    }
+
+    // retorna una lista de todas las mesas disponibles en la bbdd
+    public List<Mesa> obtenerMesasDisponibles(int numComensales) throws SQLException {
+        List<Mesa> mesasDisponibles = new ArrayList<>();
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesa_disponible_capacidad);
+        pstmt.setInt(1, numComensales);
+        ResultSet rset = pstmt.executeQuery();
+
+        while (rset.next()) {
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            String estado = rset.getString("estado_mesa");
+            int sala = rset.getInt("sala");
+            boolean combinable = rset.getBoolean("combinable");
+            mesasDisponibles.add(new Mesa(id, capacidad, estado, sala, combinable));
+        }
+
+        pstmt.close();
+        c.close();
+
+        return mesasDisponibles;
     }
 
     // actualizar el estado de las mesas, se le pasa como parametro un numero de
@@ -73,5 +120,6 @@ public class MesaDao {
         pstmt.executeUpdate();
         pstmt.close();
         c.close();
+
     }
 }

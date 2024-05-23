@@ -18,5 +18,3 @@ public class App {
         menu.ejecutarMenu(cliente);
     }
 }
-
-
