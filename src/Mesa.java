@@ -5,14 +5,14 @@ public class Mesa {
     private int capacidad;
     private String estado; // estado de la mesa, disponible ocupada
     private int sala;
-    private boolean combinable;
+    private String prioritaria;
 
-    public Mesa(int numero_mesa, int capacidad, String estado, int sala, boolean combinable) {
+    public Mesa(int numero_mesa, int capacidad, String estado, int sala, String prioritaria) {
         this.numero_mesa = numero_mesa;
         this.capacidad = capacidad;
         this.estado = estado;
         this.sala = sala;
-        this.combinable = combinable;
+        this.prioritaria = prioritaria;
 
     }
 
@@ -53,12 +53,12 @@ public class Mesa {
         this.estado = estado;
     }
 
-    public boolean isCombinable() {
-        return combinable;
+    public String getPrioritaria() {
+        return prioritaria;
     }
 
-    public void setCombinable(boolean combinable) {
-        this.combinable = combinable;
+    public void setPrioritaria(String prioritaria) {
+        this.prioritaria = prioritaria;
     }
 
 }

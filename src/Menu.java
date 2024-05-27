@@ -1,5 +1,6 @@
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -175,7 +176,6 @@ public class Menu {
             Cliente cliente = new Cliente(0, nombreCliente, telefono, email);
             int idcliente = clienteDao.insertarCliente(cliente);
 
-            // mover el id a administrado o solo sacarlo.
             System.out.println("----------------");
             System.out.println("ID del cliente generado: " + idcliente);
             System.out.println("----------------");
@@ -203,10 +203,9 @@ public class Menu {
 
             if (reservaAsignada != null) {
                 Reserva reservaNueva = reservaAsignada.getReserva();
-                int numeroMesa = reservaAsignada.getNumeroMesa();
+                List<Integer> numerosMesa = reservaAsignada.getNumerosMesa();
 
                 try {
-
                     System.out.println("=========================================");
                     System.out.println("Reservando con los siguientes detalles:");
                     System.out.println("ID Cliente: " + reservaNueva.getId_cliente());
@@ -215,16 +214,16 @@ public class Menu {
                     System.out.println("Número Comensales: " + reservaNueva.getNumero_comensales());
                     System.out.println("Descripción: " + reservaNueva.getDescripcion());
 
-                    reservaDao.insertaReservaNueva(reservaNueva, numeroMesa);
-                    System.out.println("Reserva añadida correctamente.");
+                    reservaDao.insertaReservaNueva(reservaNueva, numerosMesa);
+                    System.out.println("Reserva añadida correctamente(menu).");
                 } catch (SQLException e) {
-                    System.out.println("Error al añadir la reserva: " + e.getMessage());
+                    System.out.println("Error al añadir la reserva(menu): " + e.getMessage());
                 }
             } else {
-                System.out.println("No se pudo asignar una mesa.");
+                System.out.println("No se pudo asignar una mesa(menu).");
             }
         } catch (SQLException e) {
-            System.out.println("Error al añadir la reserva: " + e.getMessage());
+            System.out.println("Error al añadir la reserva (menu): " + e.getMessage());
         }
     }
 

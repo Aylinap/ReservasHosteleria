@@ -7,6 +7,9 @@ public class MesaDao {
     private static final String obtener_mesa_capacidad = "select * from mesa where capacidad >= ? and estado_mesa = 'disponible'";
     private static final String obtener_mesa_disponible_capacidad = "select * from mesa where capacidad >= ? and estado_mesa = 'disponible' order by capacidad";
     private static final String actualizar_estado_mesa = "update mesa set estado_mesa = ? where numero_mesa = ?";
+    private static final String obtener_mesas_combinables = "select combinable_con from combinaciones where numero_mesa = ?";
+    private static final String obtener_mesas_disponibles = "select * from mesa where estado_mesa = 'disponible'";
+    private static final String obtener_mesa_numero = "select * from mesa where numero_mesa = ?";
 
     // devuelvo un arreglo de mesas, muestra el estado de todas las mesas.
     // List contiene el ArrayList
@@ -23,8 +26,8 @@ public class MesaDao {
             int capacidad = rset.getInt("capacidad");
             String estado = rset.getString("estado_mesa");
             int sala = rset.getInt("sala");
-            boolean combinable = rset.getBoolean("combinable");
-            mesas.add(new Mesa(id, capacidad, estado, sala, combinable));
+            String prioritaria = rset.getString("prioritaria");
+            mesas.add(new Mesa(id, capacidad, estado, sala, prioritaria));
         }
 
         rset.close();
@@ -40,7 +43,6 @@ public class MesaDao {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(obtener_mesa_disponible_capacidad);
 
-        
         pstmt.setInt(1, numComensales);
         ResultSet rset = pstmt.executeQuery();
 
@@ -50,13 +52,13 @@ public class MesaDao {
             int id = rset.getInt("numero_mesa");
             int capacidad = rset.getInt("capacidad");
             int sala = rset.getInt("sala");
-            boolean combinable = rset.getBoolean("combinable");
+            String prioritaria = rset.getString("prioritaria");
             // cierro la conexion
             rset.close();
             pstmt.close();
             c.close();
             // retorno un objeto mesa con la info obtenida
-            return new Mesa(id, capacidad, "disponible", sala, combinable);
+            return new Mesa(id, capacidad, "disponible", sala, prioritaria);
         }
 
         rset.close();
@@ -94,14 +96,87 @@ public class MesaDao {
         PreparedStatement pstmt = c.prepareStatement(obtener_mesa_disponible_capacidad);
         pstmt.setInt(1, numComensales);
         ResultSet rset = pstmt.executeQuery();
+        // print para ver si estaba siendo bien la consulta.
+        System.out.println(" Consulta SQL: " + obtener_mesa_disponible_capacidad);
+        System.out.println("Número de comensales: " + numComensales);
 
         while (rset.next()) {
             int id = rset.getInt("numero_mesa");
             int capacidad = rset.getInt("capacidad");
             String estado = rset.getString("estado_mesa");
             int sala = rset.getInt("sala");
-            boolean combinable = rset.getBoolean("combinable");
-            mesasDisponibles.add(new Mesa(id, capacidad, estado, sala, combinable));
+            String prioritaria = rset.getString("prioritaria");
+            mesasDisponibles.add(new Mesa(id, capacidad, estado, sala, prioritaria));
+        }
+        //
+        if (mesasDisponibles.isEmpty()) {
+            System.out.println("No se encontraron mesas disponibles para " + numComensales + " comensales.");
+        } else {
+            System.out.println("Mesas disponibles para " + numComensales + " comensales:");
+            for (Mesa mesa : mesasDisponibles) {
+                System.out.println("Mesa " + mesa.getNumero_mesa() + " - Capacidad: " + mesa.getCapacidad());
+            }
+        }
+
+        pstmt.close();
+        c.close();
+
+        return mesasDisponibles;
+    }
+
+    public Mesa obtenerMesaPorNumero(int numeroMesa) throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesa_numero);
+        pstmt.setInt(1, numeroMesa);
+        ResultSet rset = pstmt.executeQuery();
+
+        Mesa mesa = null;
+        if (rset.next()) {
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            String estado = rset.getString("estado_mesa");
+            int sala = rset.getInt("sala");
+            String prioritaria = rset.getString("prioritaria");
+            mesa = new Mesa(id, capacidad, estado, sala, prioritaria);
+        }
+
+        rset.close();
+        pstmt.close();
+        c.close();
+        return mesa;
+    }
+
+    // obtiene todas las mesas combinables de la tabla combinaciones, pasandole el
+    // numero de mesa.
+    public List<Integer> obtenerMesasCombinables(int numeroMesa) throws SQLException {
+        List<Integer> mesasCombinables = new ArrayList<>();
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_combinables);
+        pstmt.setInt(1, numeroMesa);
+        ResultSet rset = pstmt.executeQuery();
+        while (rset.next()) {
+            mesasCombinables.add(rset.getInt("combinable_con"));
+        }
+        pstmt.close();
+        c.close();
+        return mesasCombinables;
+    }
+
+    // metodo mesas disponibles sin pasarle numero comensales como parametro, al
+    // final la consulta sql era la que me daba problemas.
+    public List<Mesa> obtenerMesasDisponiblesSinComensales() throws SQLException {
+        List<Mesa> mesasDisponibles = new ArrayList<>();
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponible);
+        ResultSet rset = pstmt.executeQuery();
+
+        while (rset.next()) {
+            int id = rset.getInt("numero_mesa");
+            int capacidad = rset.getInt("capacidad");
+            String estado = rset.getString("estado_mesa");
+            int sala = rset.getInt("sala");
+            String prioritaria = rset.getString("prioritaria");
+            mesasDisponibles.add(new Mesa(id, capacidad, estado, sala, prioritaria));
         }
 
         pstmt.close();
