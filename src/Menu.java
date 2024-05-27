@@ -36,12 +36,10 @@ public class Menu {
         System.out.println("");
         System.out.println("1. Mostrar todas las reservas");
         System.out.println("2. Buscar reserva por nombre");
-        System.out.println("3. Eliminar todas las reservas");
-        System.out.println("4. Eliminar una reserva");
-        System.out.println("5. Ver disponibilidad de las mesas");
-        System.out.println("6. Ver cuántas mesas están ocupadas");
-        System.out.println("7. Ver mesas reservadas pero no ocupadas");
-        System.out.println("8. Marcar mesa disponible nuevamente");
+        System.out.println("3. Eliminar una reserva");
+        System.out.println("4. Ver disponibilidad de las mesas");
+        System.out.println("5. Ver cuántas mesas están ocupadas");
+        System.out.println("6. Marcar mesa disponible nuevamente");
         System.out.print("Ingresa una opción: ");
 
     }
@@ -112,20 +110,21 @@ public class Menu {
                         // Eliminar todas o una reserva, falta agregar otra opción
                         break;
                     case 4:
-                        // Cualquiera que falte
-                        break;
-                    case 5:
                         mostrarTodasMesasDisponibles();
                         break;
+                    case 5:
+                        // ver cuantas mesas estan ocupadas
+                        break;
                     case 6:
-                        // Ver mesas reservadas pero no ocupadas
+                        // marcar una mesa disponible otra vez? pasarle el id de la mesa por ejemplo o
+                        // listar las mesas ocupadas y ver cual quiere poner disponible.
                         break;
                     default:
-                        System.out.println("Por favor, seleccione una opción válida.");
+                        System.out.println("Por favor, selecciona una opción válida.");
                 }
                 credencialesCorrectas = true;
             } else {
-                System.out.println("Credenciales incorrectas. Vuelve a intentarlo.");
+                System.out.println("Usuario o contraseña incorrectos.");
             }
         } while (!credencialesCorrectas);
     }
