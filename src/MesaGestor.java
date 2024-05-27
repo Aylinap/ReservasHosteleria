@@ -28,6 +28,8 @@ public class MesaGestor {
 
     // crear una reserva y mesa asignada, se le pasa como parametros los datos de
     // RESERVA
+    // el método lo primero que busca son las mesas disponibles, luego juega con
+    // eso.
     public ReservaAsignada asignarMesaYCrearReserva(int idCliente, java.sql.Date diaReserva, LocalTime horaReserva,
             int numComensales, String descripcion) throws SQLException {
         List<Mesa> mesasDisponibles = mesaDao.obtenerMesasDisponiblesSinComensales();
@@ -46,15 +48,17 @@ public class MesaGestor {
                 // print para saber que funciona el metodo(borrar)
                 System.out.println("Asignando mesa prioritaria...");
                 mesaDao.actualizarEstadoMesa(mesa.getNumero_mesa(), "ocupada");
-
+                // se agrega al arreglo de mesa reservada aunque sea solo 1
                 List<Integer> mesasReservadas = new ArrayList<>();
                 mesasReservadas.add(mesa.getNumero_mesa());
-
+                // se crea la reserva
                 Reserva reserva = new Reserva(mesa.getNumero_mesa(), idCliente, diaReserva, horaReserva, numComensales,
                         descripcion);
+                // se inserta en la bbdd
                 reservaDao.insertaReservaNueva(reserva, mesasReservadas);
                 // print para saber que mesa se le asigno si es una sola
                 System.out.println("¡Mesa asignada! Mesa número: " + mesa.getNumero_mesa());
+                // crea una reservamesa mesa se la pasa al constructor de reservaAsignada
                 // falta probar si es una mesa con comensales justos.
                 return new ReservaAsignada(reserva, mesasReservadas);
             }
@@ -62,8 +66,9 @@ public class MesaGestor {
 
         // si hay mas de 6 comensales(capacidad maxima)
         if (numComensales > 6) {
-            // print para comprobar que funciona
+            // print para comprobar que funciona (borrar quizas)
             System.out.println("Buscando combinaciones de mesas...");
+            // creo un arreglo de mesas combinables y que no sean prioritarias
             List<Mesa> mesasCombinables = new ArrayList<>();
             for (Mesa mesa : mesasDisponibles) {
                 if (!mesa.getPrioritaria().equals("si")) {
