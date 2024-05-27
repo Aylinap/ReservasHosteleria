@@ -131,6 +131,7 @@ public class MesaGestor {
                                 reservaDao.insertaReservaNueva(reserva, mesasReservadas);
 
                                 System.out.println(
+
                                         "¡Mesa asignada combinando! Mesa principal: " + mesaPrincipal.getNumero_mesa());
 
                                 return new ReservaAsignada(reserva, mesasReservadas);
@@ -156,45 +157,6 @@ public class MesaGestor {
             }
         }
         return mesasPrioritarias;
-    }
-
-    // tengo un metodo en mesa que actualiza el estado en la bbdd, se puede usar ese
-
-    public boolean eliminarReserva(int idReserva) throws SQLException {
-        // Primero, obtén la reserva y la mesa asociada
-        Reserva reserva = reservaDao.obtenerReservaPorId(idReserva);
-        // pero como sabe que la reserva es por id, tendria
-        // que ser por nombre pero el nombre no es único,
-        // sino tendria que ser unico pero es complicao,
-        // tendria que ser nombre y fecha y hora, consultar
-        // esos dos cosas mas desde la bd y asi recien
-        // borrar que coincida todo, o listar y que la
-        // persona confirme que es realmente esa y pasarle
-        // el id internamente y borrar(tambien es otra
-        // opcion)
-
-        mesaDao.obtenerTodasLasMesas();
-        Mesa mesa = new Mesa(idReserva);
-        if (reserva != null) {
-            int numeroMesa = mesa.getNumero_mesa();
-
-            // elimina la reserva, le paso el id de la reserva y al borra
-            boolean reservaEliminada = reservaDao.eliminarReserva(idReserva); // mirar que hacer con el nomnbre o el id,
-                                                                              // sacar el id y que ingrese el id manual?
-
-            // si la reserva se elimino correctamente, actualiza el estado de la mesa a
-            // "disponible"
-            if (reservaEliminada) {
-                mesaDao.actualizarEstadoMesa(numeroMesa, "disponible");
-                return true;
-            } else {
-                // si la reserva no se pudo eliminar, maneja el error como consideres necesario
-                return false;
-            }
-        } else {
-            // si no se encuentra la reserva, maneja el caso como consideres necesario
-            return false;
-        }
     }
 
 }

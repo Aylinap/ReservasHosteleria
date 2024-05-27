@@ -10,6 +10,14 @@ public class MesaDao {
     private static final String obtener_mesas_combinables = "select combinable_con from combinaciones where numero_mesa = ?";
     private static final String obtener_mesas_disponibles = "select * from mesa where estado_mesa = 'disponible'";
     private static final String obtener_mesa_numero = "select * from mesa where numero_mesa = ?";
+    private static final String obtener_mesas_ocupadas = "select * from mesa where estado_mesa = 'ocupada'";
+    private static final String obtener_mesas_ocupadas_horario = "select mesa.*, reserva.*"
+            +
+            "from mesa " +
+            "inner join reservamesa ON mesa.numero_mesa = reservamesa.numero_mesa " +
+            "inner join reserva ON reservamesa.id_reserva = reserva.id_reserva " +
+            "where mesa.estado_mesa = 'ocupada'";
+    private static final String marcar_todas_las_mesas_disponibles = "update mesa set estado_mesa = 'disponible'";
 
     // devuelvo un arreglo de mesas, muestra el estado de todas las mesas.
     // List contiene el ArrayList
@@ -71,7 +79,7 @@ public class MesaDao {
     // comensales:
     public void mostrarTodasLasMesasDisponibles() throws SQLException {
         Connection c = Dao.openConnection();
-        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponible);
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_disponibles);
         ResultSet rset = pstmt.executeQuery();
 
         System.out.println("-------------Mesas Disponibles------------- ");
@@ -80,6 +88,29 @@ public class MesaDao {
                     "=====================================" +
                             "\n ID de la mesa: " + rset.getInt("numero_mesa") +
                             "\n Capacidad: " + rset.getInt("capacidad") +
+                            "\n Sala: " + rset.getInt("sala") +
+                            "\n Estado: " + rset.getString("estado_mesa") +
+                            "\n =====================================");
+        }
+
+        pstmt.close();
+        c.close();
+    }
+
+    // mostrar mesas ocupadas (listar)
+    public void mostrarTodasLasMesasOcupadas() throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(obtener_mesas_ocupadas_horario);
+        ResultSet rset = pstmt.executeQuery();
+
+        System.out.println("-------------Mesas Ocupadas------------- ");
+        while (rset.next()) {
+            System.out.println(
+                    "=====================================" +
+                            "\n ID de la mesa: " + rset.getInt("numero_mesa") +
+                            "\n Capacidad: " + rset.getInt("capacidad") +
+                            "\n Horario ocupada: " + rset.getTime("hora_reserva") +
+                            "\n Día reserva ocupada: " + rset.getDate("dia_reserva") +
                             "\n Sala: " + rset.getInt("sala") +
                             "\n Estado: " + rset.getString("estado_mesa") +
                             "\n =====================================");
@@ -124,6 +155,7 @@ public class MesaDao {
         return mesasDisponibles;
     }
 
+    // obtenermesas por numero
     public Mesa obtenerMesaPorNumero(int numeroMesa) throws SQLException {
         Connection c = Dao.openConnection();
         PreparedStatement pstmt = c.prepareStatement(obtener_mesa_numero);
@@ -196,5 +228,14 @@ public class MesaDao {
         pstmt.close();
         c.close();
 
+    }
+
+    // marcar todas las mesas disponibles
+    public void marcarTodasLasMesasComoDisponibles() throws SQLException {
+        Connection c = Dao.openConnection();
+        PreparedStatement pstmt = c.prepareStatement(marcar_todas_las_mesas_disponibles);
+        pstmt.executeUpdate();
+        pstmt.close();
+        c.close();
     }
 }

@@ -27,6 +27,7 @@ public class Menu {
         System.out.println("3. Cancelar una reserva");
         System.out.println("4. Modificar una reserva");
         System.out.println("5. Acceder al Gestor de Reservas");
+        System.out.println("0. Salir..");
         System.out.print("Ingresa una opción: ");
 
     }
@@ -39,14 +40,15 @@ public class Menu {
         System.out.println("3. Eliminar una reserva");
         System.out.println("4. Ver disponibilidad de las mesas");
         System.out.println("5. Ver cuántas mesas están ocupadas");
-        System.out.println("6. Marcar mesa disponible nuevamente");
+        System.out.println("6. Marcar todas las mesas disponible nuevamente");
+        System.out.println("7. Volver al menú anterior:");
+        System.out.println("0. Salir..");
         System.out.print("Ingresa una opción: ");
 
     }
 
     // parametro que le paso es el usuario
     public void ejecutarMenu(Usuario usuario) {
-        Scanner scanner = new Scanner(System.in);
         int opcion;
         do {
             mostrarMenuPrincipal();
@@ -61,7 +63,7 @@ public class Menu {
                     buscarReservaPorNombre();
                     break;
                 case 3:
-                    // Cancelar una reserva
+                    eliminarReserva();
                     break;
                 case 4:
                     // Modificar una reserva
@@ -73,10 +75,13 @@ public class Menu {
                         System.out.println("Debe ser administrador para acceder al Gestor de Reservas.");
                     }
                     break;
+                case 0:
+                    System.out.println("Saliendo...");
+                    break;
                 default:
                     System.out.println("Por favor, seleccione una opción válida.");
             }
-        } while (opcion < 1 || opcion > 5);
+        } while (opcion != 0);
 
     }
 
@@ -107,17 +112,22 @@ public class Menu {
                         buscarReservaPorNombre();
                         break;
                     case 3:
-                        // Eliminar todas o una reserva, falta agregar otra opción
+                        eliminarReserva();
                         break;
                     case 4:
                         mostrarTodasMesasDisponibles();
                         break;
                     case 5:
-                        // ver cuantas mesas estan ocupadas
+                        mostrarTodasMesasOcupadas();
                         break;
                     case 6:
-                        // marcar una mesa disponible otra vez? pasarle el id de la mesa por ejemplo o
-                        // listar las mesas ocupadas y ver cual quiere poner disponible.
+                        marcarTodasMesasDisponibles();
+
+                        break;
+                    case 7:
+                        ejecutarMenu(null);
+                    case 0:
+                        System.out.println("Saliendo del programa..");
                         break;
                     default:
                         System.out.println("Por favor, selecciona una opción válida.");
@@ -235,6 +245,15 @@ public class Menu {
         }
     }
 
+    // mostrar las mesas ocupadas
+    public void mostrarTodasMesasOcupadas() {
+        try {
+            mesaDao.mostrarTodasLasMesasOcupadas();
+        } catch (SQLException e) {
+            System.out.println("No hay mesas ocupadas");
+        }
+    }
+
     // metodo bsucar reserva por nombre, cliente:
     public void buscarReservaPorNombre() {
         try {
@@ -251,9 +270,62 @@ public class Menu {
         try {
             System.out.println("----Mesas disponibles----");
             mesaDao.mostrarTodasLasMesasDisponibles();
-            ;
+
         } catch (SQLException e) {
             System.out.println(" No hay mesas disponibles");
+        }
+    }
+
+    // borrar una reserva por nombre
+
+    public void eliminarReserva() {
+
+        System.out.println("\n---- Eliminar Reserva ----");
+        System.out.print("Ingresa el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+
+        try {
+            ReservaDao reservaDao = new ReservaDao();
+            List<Reserva> reservas = reservaDao.obtenerReservasPorNombre(nombreCliente);
+
+            if (reservas.isEmpty()) {
+                System.out.println("No se encontraron reservas para el cliente: " + nombreCliente);
+                return;
+            }
+
+            System.out.println("\n -- Reservas encontradas con el nombre: " + nombreCliente);
+
+            for (Reserva reserva : reservas) {
+                System.out.println("ID de Reserva: " + reserva.getId_reserva() +
+                        ", Día: " + reserva.getDiaReserva() +
+                        ", Hora: " + reserva.getHoraReserva() +
+                        ", Comensales: " + reserva.getNumero_comensales() +
+                        ", Comentario: " + reserva.getDescripcion());
+            }
+            System.out.println("");
+            System.out.print("\nIngresa el ID de la reserva que deseas eliminar: ");
+            int idReserva = scanner.nextInt();
+            scanner.nextLine();
+
+            reservaDao.eliminarReservaPorId(idReserva);
+            System.out.println("Reserva eliminada correctamente.");
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar la reserva: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // marcar todas las mesas disponibles
+    public void marcarTodasMesasDisponibles() {
+        try {
+
+            mesaDao.marcarTodasLasMesasComoDisponibles();
+            System.out.println("");
+            System.out.println("Se han marcado todas las mesas como disponibles");
+
+        } catch (SQLException e) {
+            System.out.println("No se han podido marcar las mesas como 'disponibles' ");
+            e.printStackTrace();
         }
     }
 }
