@@ -2,6 +2,7 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Menu {
@@ -364,4 +365,48 @@ public class Menu {
             System.out.println("Error al mostrar las reservas de hoy por horario.");
         }
     }
+
+    // modificar una reserva, no se ha probado ni lo quiero tocar, me complica el tema de volver asignar mesas otra vez
+
+    public void modificarReservaExistente() {
+        System.out.println("-----Modificar una reserva------");
+        System.out.println("Busca el nombre nombre de la reserva");
+        buscarReservaPorNombre();
+
+        System.out.println("Ingresa el ID de la reserva a modificar:");
+        int idReserva = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Ingresa la nueva fecha de la reserva (YYYY-MM-DD):");
+        String nuevaFecha = scanner.nextLine();
+        java.sql.Date fechaReserva = java.sql.Date.valueOf(nuevaFecha);
+
+        System.out.println("Ingresa la nueva hora de la reserva (HH:MM):");
+        String nuevaHora = scanner.nextLine();
+        LocalTime horaReserva = LocalTime.parse(nuevaHora);
+
+        System.out.println("Ingresa el nuevo número de comensales:");
+        int numeroComensales = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Ingresa el nuevo comentario (opcional):");
+        String comentario = scanner.nextLine();
+
+        System.out.println("Ingrese los nuevos números de mesa separados por comas:");
+        String[] mesas = scanner.nextLine().split(",");
+        List<Integer> numerosMesa = new ArrayList<>();
+        for (String mesa : mesas) {
+            numerosMesa.add(Integer.parseInt(mesa.trim()));
+        }
+
+        Reserva reservaModificada = new Reserva(idReserva, 0, fechaReserva, horaReserva, numeroComensales, comentario);
+
+        try {
+            reservaDao.modificarReserva(idReserva, reservaModificada, numerosMesa);
+            System.out.println("Reserva modificada exitosamente.");
+        } catch (SQLException e) {
+            System.out.println("Error al modificar la reserva: " + e.getMessage());
+        }
+    }
+
 }

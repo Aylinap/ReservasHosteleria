@@ -10,7 +10,7 @@ public class ReservaDao {
     private static final String mostrar_todas_reservas = "select reserva.*, cliente.nombre_cliente from reserva inner join cliente on reserva.id_cliente = cliente.id_cliente";
     private static final String mostrar_reserva_por_nombre = "select reserva.*, cliente.nombre_cliente from reserva inner join cliente on reserva.id_cliente = cliente.id_cliente where nombre_cliente = ?";
     private static final String eliminar_reserva = "Delete from reserva where id_reserva=?";
-    private static final String modificar_reserva = "update reserva set dia_reserva=?, hora_reserva=?, comensales=?, comentario=?";
+    private static final String modificar_reserva = "UPDATE reserva SET dia_reserva = ?, hora_reserva = ?, comensales = ?, comentario = ? WHERE id_reserva = ?";
     private static final String modificar_reserva_mesa = " update reservamesa set numero_mesa=?";
     private static final String modificar_estado_mesa = "update mesa set estado_mesa = 'disponible' where numero_mesa IN (select numero_mesa from reservamesa where id_reserva = ?)";
     private static final String obtener_reserva_id = "select reserva.* from reserva where id_reserva = ?";
@@ -215,38 +215,46 @@ public class ReservaDao {
         }
     }
 
-    public void modificarReserva(int id_reserva, Reserva reservaModificada, int numero_mesa) throws SQLException {
+    // modificar una reserva, no lo he probado ni lo quiero tocar.
+
+    public void modificarReserva(int id_reserva, Reserva reservaModificada, List<Integer> numerosMesa)
+            throws SQLException {
         Connection c = Dao.openConnection();
-        PreparedStatement pstmt = c.prepareStatement(modificar_reserva);
 
-        // aqui faltaria ver si le paso realmente el id_cliente creo que no deberia
-        // pstmt.setInt(1, reservaModificada.getId_cliente());
+        try {
 
-        // parseo de fecha java para usarla en sql
-        pstmt.setDate(2, new java.sql.Date(reservaModificada.getDiaReserva().getTime()));
-        // parseo de hora para introducirla en la bbdd
-        pstmt.setTime(3, Time.valueOf(reservaModificada.getHoraReserva()));
-        pstmt.setInt(4, reservaModificada.getNumero_comensales());
-        pstmt.setString(5, reservaModificada.getDescripcion());
+            PreparedStatement pstmtReserva = c.prepareStatement(modificar_reserva);
+            pstmtReserva.setDate(1, new java.sql.Date(reservaModificada.getDiaReserva().getTime()));
+            pstmtReserva.setTime(2, Time.valueOf(reservaModificada.getHoraReserva()));
+            pstmtReserva.setInt(3, reservaModificada.getNumero_comensales());
+            pstmtReserva.setString(4, reservaModificada.getDescripcion());
+            pstmtReserva.setInt(5, id_reserva);
 
-        pstmt.executeUpdate();
-        pstmt.close();
-        c.close();
+            pstmtReserva.executeUpdate();
 
-        // despues insertamos el numero de mesa en la tabla reservamesa y si es que
-        // llega a cambiar
+            PreparedStatement pstmtMarcarMesaDisponible = c.prepareStatement(modificar_estado_mesa);
+            pstmtMarcarMesaDisponible.setInt(1, id_reserva);
+            pstmtMarcarMesaDisponible.executeUpdate();
 
-        c = Dao.openConnection();
-        pstmt = c.prepareStatement(modificar_reserva_mesa);
-        pstmt.setInt(1, id_reserva);
-        pstmt.setInt(2, numero_mesa);
+            PreparedStatement pstmtReservaMesa = c.prepareStatement("DELETE FROM reservamesa WHERE id_reserva = ?");
+            pstmtReservaMesa.setInt(1, id_reserva);
+            pstmtReservaMesa.executeUpdate();
 
-        pstmt.executeUpdate();
-        pstmt.close();
-        c.close();
+            PreparedStatement pstmtInsertarReservaMesa = c.prepareStatement(insertar_reserva_mesa);
+            for (int numero_mesa : numerosMesa) {
+                pstmtInsertarReservaMesa.setInt(1, id_reserva);
+                pstmtInsertarReservaMesa.setInt(2, numero_mesa);
+                pstmtInsertarReservaMesa.addBatch();
+            }
+            pstmtInsertarReservaMesa.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error al modificar la reserva con ID: " + id_reserva);
+        }
     }
 
-    // obtener reserva por id. -> (no lo estoy usando)
+    // obtener reserva por id. -> (no lo estoy usando(creo))
 
     public Reserva obtenerReservaPorId(int id_reserva) throws SQLException {
         Connection c = Dao.openConnection();

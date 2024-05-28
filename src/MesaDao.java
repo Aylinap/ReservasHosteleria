@@ -1,16 +1,15 @@
 import java.sql.*;
+import java.time.LocalTime;
 import java.util.*;
 
 public class MesaDao {
     private static final String obtener_mesas_disponible = "select * from mesa where estado_mesa = 'disponible'";
     private static final String obtener_mesas = "select * from mesa";
-    private static final String obtener_mesa_capacidad = "select * from mesa where capacidad >= ? and estado_mesa = 'disponible'";
     private static final String obtener_mesa_disponible_capacidad = "select * from mesa where capacidad >= ? and estado_mesa = 'disponible' order by capacidad";
     private static final String actualizar_estado_mesa = "update mesa set estado_mesa = ? where numero_mesa = ?";
     private static final String obtener_mesas_combinables = "select combinable_con from combinaciones where numero_mesa = ?";
     private static final String obtener_mesas_disponibles = "select * from mesa where estado_mesa = 'disponible'";
     private static final String obtener_mesa_numero = "select * from mesa where numero_mesa = ?";
-    private static final String obtener_mesas_ocupadas = "select * from mesa where estado_mesa = 'ocupada'";
     private static final String obtener_mesas_ocupadas_horario = "select mesa.*, reserva.*"
             +
             "from mesa " +
