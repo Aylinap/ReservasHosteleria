@@ -2,6 +2,7 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Date;
 
 public class Menu {
     private Scanner scanner;
@@ -41,7 +42,8 @@ public class Menu {
         System.out.println("4. Ver disponibilidad de las mesas");
         System.out.println("5. Ver cuántas mesas están ocupadas");
         System.out.println("6. Marcar todas las mesas disponible nuevamente");
-        System.out.println("7. Volver al menú anterior:");
+        System.out.println("7. Ver Reservas de hoy");
+        System.out.println("8. Volver al menú anterior:");
         System.out.println("0. Salir..");
         System.out.print("Ingresa una opción: ");
 
@@ -125,7 +127,12 @@ public class Menu {
 
                         break;
                     case 7:
+                        mostrarReservasHoyPorHorario();
+                        break;
+                    case 8:
                         ejecutarMenu(null);
+                        break;
+
                     case 0:
                         System.out.println("Saliendo del programa..");
                         break;
@@ -326,6 +333,35 @@ public class Menu {
         } catch (SQLException e) {
             System.out.println("No se han podido marcar las mesas como 'disponibles' ");
             e.printStackTrace();
+        }
+    }
+
+    // mostrar reservas por horarios
+
+    public void mostrarReservasHoyPorHorario() {
+        try {
+            // fecha de hoy
+            java.util.Date utilDate = new java.util.Date();
+            // parseo de fecha
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            // obtener las de hoy
+            List<Reserva> reservas = reservaDao.obtenerReservasHoyPorHorario(sqlDate);
+
+            // print reservas
+            System.out.println("Reservas de hoy por horario:");
+            for (Reserva reserva : reservas) {
+                System.out.println("ID Reserva: " + reserva.getId_reserva());
+                System.out.println("ID Cliente: " + reserva.getId_cliente());
+                System.out.println("Día Reserva: " + reserva.getDiaReserva());
+                System.out.println("Hora Reserva: " + reserva.getHoraReserva());
+                System.out.println("Comensales: " + reserva.getNumero_comensales());
+                System.out.println("Descripción: " + reserva.getDescripcion());
+                System.out.println("-----------------------------------");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error al mostrar las reservas de hoy por horario.");
         }
     }
 }

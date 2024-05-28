@@ -25,6 +25,7 @@ public class ReservaDao {
     private static final String obtener_mesas_por_reserva = "select numero_mesa FROM reservamesa WHERE id_reserva = ?";
     private static final String eliminar_reserva_por_id = "delete FROM reserva where id_reserva = ?";
     private static final String marcar_mesa_disponible = "update mesa SET estado_mesa = 'disponible' where numero_mesa = ?";
+    private static final String obtener_reservas_hoy = "select * from reserva where dia_reserva = ? order by hora_reserva";
 
     // metodo insertar tabla reserva mesa
     public int insertaReservaNueva(Reserva nuevaReserva, List<Integer> numerosMesa) throws SQLException {
@@ -274,4 +275,37 @@ public class ReservaDao {
         c.close();
         return idReserva;
     }
+
+    // mostrar reservas por dia
+
+    public List<Reserva> obtenerReservasHoyPorHorario(Date fechaActual) throws SQLException {
+
+        try {
+            Connection c = Dao.openConnection();
+            PreparedStatement pstmt = c.prepareStatement(obtener_reservas_hoy);
+            pstmt.setDate(1, fechaActual);
+            ResultSet rset = pstmt.executeQuery();
+
+            List<Reserva> reservas = new ArrayList<>();
+
+            while (rset.next()) {
+                int idReserva = rset.getInt("id_reserva");
+                int idCliente = rset.getInt("id_cliente");
+                Date diaReserva = rset.getDate("dia_reserva");
+                Time time = rset.getTime("hora_reserva");
+                LocalTime horaReserva = time.toLocalTime();
+                int comensales = rset.getInt("comensales");
+                String descripcion = rset.getString("comentario");
+
+                Reserva reserva = new Reserva(idReserva, idCliente, diaReserva, horaReserva, comensales, descripcion);
+                reservas.add(reserva);
+            }
+
+            return reservas;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error al obtener las reservas de hoy por horario.");
+        }
+    }
+
 }
